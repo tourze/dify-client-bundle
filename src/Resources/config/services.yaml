@@ -1,0 +1,51 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  Tourze\DifyClientBundle\Repository\:
+      resource: '../../Repository/'
+
+  # Service 服务
+  Tourze\DifyClientBundle\Service\:
+    resource: '../../Service'
+
+  Tourze\DifyClientBundle\Service\MessageAggregator:
+    arguments:
+      $aggregationTimeout: 30
+
+  Tourze\DifyClientBundle\Service\DifyMessengerService:
+    public: true
+
+  # MessageHandler 服务
+  Tourze\DifyClientBundle\MessageHandler\:
+    resource: '../../MessageHandler'
+
+  Tourze\DifyClientBundle\MessageHandler\ProcessDifyMessageHandler:
+    tags:
+      - { name: messenger.message_handler }
+
+  Tourze\DifyClientBundle\MessageHandler\RetryFailedMessageHandler:
+    tags:
+      - { name: messenger.message_handler }
+
+  # Command 服务 - 明确定义每个命令
+  Tourze\DifyClientBundle\Command\DifyHealthCommand:
+    tags: [ 'console.command' ]
+
+  Tourze\DifyClientBundle\Command\DifyRetryFailedCommand:
+    tags: [ 'console.command' ]
+
+  # Command Support 服务（辅助类，不是控制台命令）
+  Tourze\DifyClientBundle\Command\Support\:
+    resource: '../../Command/Support'
+
+  # Controller 服务
+  Tourze\DifyClientBundle\Controller\Admin\:
+    resource: '../../Controller/Admin'
+    tags: [ 'controller.service_arguments' ]
+
+  # Admin Menu 服务
+  Tourze\DifyClientBundle\Service\AdminMenu:
+    tags: [ 'easy-admin-menu.provider' ]
+
