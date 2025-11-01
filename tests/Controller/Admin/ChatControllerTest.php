@@ -41,8 +41,7 @@ final class ChatControllerTest extends AbstractWebTestCase
      */
     public function testChatPageRequiresSettingIdParameter(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         // 期望抛出NotFoundHttpException异常
         $this->expectException(NotFoundHttpException::class);
@@ -57,8 +56,7 @@ final class ChatControllerTest extends AbstractWebTestCase
      */
     public function testChatPageRequiresValidSettingId(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         // 期望抛出NotFoundHttpException异常
         $this->expectException(NotFoundHttpException::class);
@@ -93,8 +91,7 @@ final class ChatControllerTest extends AbstractWebTestCase
      */
     public function testChatPageWithEmptySettingId(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         // 期望抛出NotFoundHttpException异常
         $this->expectException(NotFoundHttpException::class);
