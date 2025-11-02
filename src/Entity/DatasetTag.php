@@ -152,14 +152,6 @@ class DatasetTag implements \Stringable
         return $this;
     }
 
-    /**
-     * 设置创建时间
-     */
-    public function setCreateTime(\DateTimeImmutable $createTime): void
-    {
-        $this->createTime = $createTime;
-    }
-
     public function __toString(): string
     {
         return $this->name;

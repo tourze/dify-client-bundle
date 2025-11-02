@@ -7,6 +7,7 @@ namespace Tourze\DifyClientBundle\Tests\Controller\Admin;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -25,6 +26,21 @@ use Tourze\PHPUnitSymfonyWebTest\AbstractWebTestCase;
 final class ChatControllerTest extends AbstractWebTestCase
 {
     /**
+     * 创建已认证的客户端（本地实现）
+     */
+    private function createAuthenticatedClientLocal(): KernelBrowser
+    {
+        $client = self::createClientWithDatabase();
+        self::getClient($client);
+
+        // 使用推断内核兼容的用户名和更直接的认证方式
+        $user = new \Symfony\Component\Security\Core\User\InMemoryUser('admin', '', ['ROLE_ADMIN']);
+        $client->loginUser($user, 'main');
+
+        return $client;
+    }
+
+    /**
      * 测试控制器能够正确实例化
      */
     public function testControllerCanBeInstantiated(): void
@@ -41,7 +57,7 @@ final class ChatControllerTest extends AbstractWebTestCase
      */
     public function testChatPageRequiresSettingIdParameter(): void
     {
-        $client = self::createAuthenticatedClient();
+        $client = $this->createAuthenticatedClientLocal();
 
         // 期望抛出NotFoundHttpException异常
         $this->expectException(NotFoundHttpException::class);
@@ -56,7 +72,7 @@ final class ChatControllerTest extends AbstractWebTestCase
      */
     public function testChatPageRequiresValidSettingId(): void
     {
-        $client = self::createAuthenticatedClient();
+        $client = $this->createAuthenticatedClientLocal();
 
         // 期望抛出NotFoundHttpException异常
         $this->expectException(NotFoundHttpException::class);
@@ -91,7 +107,7 @@ final class ChatControllerTest extends AbstractWebTestCase
      */
     public function testChatPageWithEmptySettingId(): void
     {
-        $client = self::createAuthenticatedClient();
+        $client = $this->createAuthenticatedClientLocal();
 
         // 期望抛出NotFoundHttpException异常
         $this->expectException(NotFoundHttpException::class);

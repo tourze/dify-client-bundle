@@ -335,14 +335,6 @@ class WorkflowExecution implements \Stringable
         return round(($this->completedSteps / $this->totalSteps) * 100, 2);
     }
 
-    /**
-     * 设置创建时间
-     */
-    public function setCreateTime(\DateTimeImmutable $createTime): void
-    {
-        $this->createTime = $createTime;
-    }
-
     public function getTotalTokens(): ?int
     {
         return $this->totalTokens;

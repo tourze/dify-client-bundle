@@ -186,14 +186,6 @@ class Annotation implements \Stringable
         $this->lastHitAt = $lastHitAt;
     }
 
-    /**
-     * 设置创建时间
-     */
-    public function setCreateTime(\DateTimeImmutable $createTime): void
-    {
-        $this->createTime = $createTime;
-    }
-
     public function __toString(): string
     {
         $questionPreview = mb_substr($this->question, 0, 50);

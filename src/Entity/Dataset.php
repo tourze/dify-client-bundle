@@ -234,14 +234,6 @@ class Dataset implements \Stringable
         }
     }
 
-    /**
-     * 设置创建时间
-     */
-    public function setCreateTime(\DateTimeImmutable $createTime): void
-    {
-        $this->createTime = $createTime;
-    }
-
     public function __toString(): string
     {
         return sprintf('%s (%d文档)', $this->name, $this->documentCount);

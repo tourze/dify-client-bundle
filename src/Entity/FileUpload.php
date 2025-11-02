@@ -288,14 +288,6 @@ class FileUpload implements \Stringable
     }
 
     /**
-     * 设置创建时间
-     */
-    public function setCreateTime(\DateTimeImmutable $createTime): void
-    {
-        $this->createTime = $createTime;
-    }
-
-    /**
      * 获取错误信息
      */
     public function getErrorMessage(): ?string

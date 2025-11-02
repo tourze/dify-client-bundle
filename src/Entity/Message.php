@@ -178,14 +178,6 @@ class Message implements \Stringable
     }
 
     /**
-     * 设置创建时间
-     */
-    public function setCreateTime(\DateTimeImmutable $createTime): void
-    {
-        $this->createTime = $createTime;
-    }
-
-    /**
      * 获取消息ID（SnowflakeKey的别名方法）
      */
     public function getMessageId(): ?string

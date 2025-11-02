@@ -162,14 +162,6 @@ class AppInfo implements \Stringable
         $this->metadata = $metadata;
     }
 
-    /**
-     * 设置创建时间
-     */
-    public function setCreateTime(\DateTimeImmutable $createTime): void
-    {
-        $this->createTime = $createTime;
-    }
-
     public function __toString(): string
     {
         return sprintf('%s (%s)', $this->name, $this->mode);

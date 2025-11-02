@@ -268,14 +268,6 @@ class WorkflowLog implements \Stringable
         $this->setLogLevel($level);
     }
 
-    /**
-     * 设置创建时间
-     */
-    public function setCreateTime(\DateTimeImmutable $createTime): void
-    {
-        $this->createTime = $createTime;
-    }
-
     public function getNodeType(): ?string
     {
         return $this->nodeType;

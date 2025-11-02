@@ -194,14 +194,6 @@ class MessageFeedback implements \Stringable
     }
 
     /**
-     * 设置创建时间
-     */
-    public function setCreateTime(\DateTimeImmutable $createTime): void
-    {
-        $this->createTime = $createTime;
-    }
-
-    /**
      * 设置评论内容（setContent 的别名）
      */
     public function setComment(?string $comment): void

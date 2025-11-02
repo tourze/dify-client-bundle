@@ -365,14 +365,6 @@ class AudioTranscription implements \Stringable
         $this->confidence = $confidence;
     }
 
-    /**
-     * 设置创建时间
-     */
-    public function setCreateTime(\DateTimeImmutable $createTime): void
-    {
-        $this->createTime = $createTime;
-    }
-
     public function __toString(): string
     {
         $typeLabel = 'text_to_audio' === $this->type ? '文字转语音' : '语音转文字';

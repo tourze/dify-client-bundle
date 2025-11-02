@@ -294,14 +294,6 @@ class WorkflowTask implements \Stringable
         return 'running' === $this->status;
     }
 
-    /**
-     * 设置创建时间
-     */
-    public function setCreateTime(\DateTimeImmutable $createTime): void
-    {
-        $this->createTime = $createTime;
-    }
-
     public function getTitle(): ?string
     {
         return $this->title;
