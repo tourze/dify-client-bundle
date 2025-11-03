@@ -26,16 +26,26 @@ use Tourze\PHPUnitSymfonyWebTest\AbstractWebTestCase;
 final class ChatControllerTest extends AbstractWebTestCase
 {
     /**
-     * 创建已认证的客户端（本地实现）
+     * 创建已认证的客户端
      */
     private function createAuthenticatedClientLocal(): KernelBrowser
     {
-        $client = self::createClientWithDatabase();
+        // 直接调用父类的 createClient，绕过可能的问题
+        $client = parent::createClient();
+
+        // 立即设置客户端到 Symfony 的静态存储中
         self::getClient($client);
 
-        // 使用推断内核兼容的用户名和更直接的认证方式
-        $user = new \Symfony\Component\Security\Core\User\InMemoryUser('admin', '', ['ROLE_ADMIN']);
-        $client->loginUser($user, 'main');
+        // 清理数据库（如果需要）
+        if (self::hasDoctrineSupport()) {
+            self::cleanDatabase();
+        }
+
+        // 关闭异常捕获
+        $client->catchExceptions(false);
+
+        // 直接使用内存管理员用户登录，避免 provider 重载导致的角色丢失
+        $client->loginUser(new \Symfony\Component\Security\Core\User\InMemoryUser('admin', 'password', ['ROLE_ADMIN']), 'main');
 
         return $client;
     }
