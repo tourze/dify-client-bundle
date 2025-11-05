@@ -79,9 +79,7 @@ final class DifySettingCrudControllerTest extends AbstractEasyAdminControllerTes
     #[Test]
     public function testIndexPageAccessibleWithValidRole(): void
     {
-        $client = self::createClientWithDatabase();
-        self::getClient($client);
-        $this->loginAsAdmin($client);
+        $client = $this->createAuthenticatedClient();
 
         $client->request('GET', '/admin/dify-client/dify-setting');
 
