@@ -1,0 +1,29 @@
+# PHPStan configuration for dify-client-bundle
+# 继承根目录配置，设置 level=1，仅扫描 src 目录
+
+parameters:
+    level: 1
+    paths:
+        - src/
+    excludePaths:
+        - */vendor/*
+        - */var/*
+        - */cache/*
+        - */logs/*
+        - */node_modules/*
+        - */tests/Fixtures/*
+        - */Tests/Fixtures/*
+        - */Migrations/*
+        - */Resources/public/*
+        - */Resources/assets/*
+        - */build/*
+        - */dist/*
+        - */examples/*
+        - */benchmark/*
+        - */extra/*
+    reportUnmatchedIgnoredErrors: false
+    treatPhpDocTypesAsCertain: false
+
+# 继承根目录的主要配置
+includes:
+    - ../../phpstan.neon

@@ -33,7 +33,6 @@ final class EmbeddingModelTest extends AbstractEntityTestCase
         yield 'maxTokens' => ['maxTokens', 8191];
         yield 'modelType' => ['modelType', 'text'];
         yield 'available' => ['available', false];
-        yield 'default' => ['default', true];
         yield 'pricePerThousandTokens' => ['pricePerThousandTokens', 0.0001];
         yield 'currency' => ['currency', 'USD'];
     }

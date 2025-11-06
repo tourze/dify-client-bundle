@@ -190,22 +190,6 @@ class EmbeddingModel implements \Stringable
         $this->isDefault = $isDefault;
     }
 
-    /**
-     * @deprecated Use setIsDefault() instead
-     */
-    public function setDefault(bool $isDefault): void
-    {
-        $this->setIsDefault($isDefault);
-    }
-
-    /**
-     * @deprecated Use isDefault() instead
-     */
-    public function getDefault(): bool
-    {
-        return $this->isDefault();
-    }
-
     public function getPricePerThousandTokens(): ?float
     {
         return $this->pricePerThousandTokens;
