@@ -16,6 +16,12 @@ jobs:
           - stable
     steps:
       - uses: actions/checkout@master
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php_version }}
+          ini-values: zend.assertions=1, assert.exception=1
+          coverage: none
       - name: Install Dependencies
         run: composer update --prefer-dist --no-interaction --no-suggest --prefer-${{ matrix.prefer }}
       - name: Run PHPUnit
