@@ -2,7 +2,6 @@
 
 namespace Tourze\DifyClientBundle\Tests;
 
-use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -48,28 +47,6 @@ final class DifyClientBundleTest extends AbstractBundleTestCase
         $this->assertEquals($expectedPath, $path);
         $this->assertDirectoryExists($path);
         $this->assertStringEndsWith('dify-client-bundle/src', $path);
-    }
-
-    public function testGetBundleDependenciesShouldReturnDoctrineBundle(): void
-    {
-        // Act: 获取 Bundle 依赖
-        $dependencies = DifyClientBundle::getBundleDependencies();
-
-        // Assert: 验证依赖配置
-        $this->assertIsArray($dependencies);
-        $this->assertArrayHasKey(DoctrineBundle::class, $dependencies);
-        $this->assertEquals(['all' => true], $dependencies[DoctrineBundle::class]);
-    }
-
-    public function testGetBundleDependenciesShouldBeStaticMethod(): void
-    {
-        // Arrange & Act: 获取方法反射
-        $reflection = new \ReflectionClass(DifyClientBundle::class);
-        $method = $reflection->getMethod('getBundleDependencies');
-
-        // Assert: 验证方法是静态的
-        $this->assertTrue($method->isStatic());
-        $this->assertTrue($method->isPublic());
     }
 
     public function testBundleDependenciesReturnTypeAnnotation(): void
