@@ -26,7 +26,7 @@ use Tourze\DifyClientBundle\Repository\DifySettingRepository;
  * 提供消息标注的创建、更新、删除和查询功能
  * 对应 API: GET/POST/PUT/DELETE /annotations
  */
-readonly class AnnotationService
+final readonly class AnnotationService
 {
     public function __construct(
         private HttpClientInterface $httpClient,

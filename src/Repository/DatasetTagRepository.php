@@ -16,7 +16,7 @@ use Tourze\PHPUnitSymfonyKernelTest\Attribute\AsRepository;
  * @extends ServiceEntityRepository<DatasetTag>
  */
 #[AsRepository(entityClass: DatasetTag::class)]
-class DatasetTagRepository extends ServiceEntityRepository
+final class DatasetTagRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

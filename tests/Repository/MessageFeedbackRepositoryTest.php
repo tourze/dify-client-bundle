@@ -55,9 +55,11 @@ final class MessageFeedbackRepositoryTest extends AbstractRepositoryTestCase
         $messageFeedback = new MessageFeedback();
         $messageFeedback->setFeedbackId('test-feedback-' . uniqid());
         $messageFeedback->setMessage($message);
+        $messageFeedback->setConversation($conversation);
         $messageFeedback->setRating('like');
         $messageFeedback->setContent('Good response');
         $messageFeedback->setUserId('test-user');
+        $messageFeedback->setSubmittedAt(new \DateTimeImmutable());
 
         return $messageFeedback;
     }

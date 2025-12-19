@@ -4,15 +4,10 @@ declare(strict_types=1);
 
 namespace Tourze\DifyClientBundle\Tests\Service;
 
-use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
-use Psr\Clock\ClockInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Tourze\DifyClientBundle\Repository\DifySettingRepository;
-use Tourze\DifyClientBundle\Repository\MessageFeedbackRepository;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Tourze\DifyClientBundle\Service\FeedbackService;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractIntegrationTestCase;
 
 /**
  * FeedbackService 测试类
@@ -21,66 +16,19 @@ use Tourze\DifyClientBundle\Service\FeedbackService;
  * @internal
  */
 #[CoversClass(FeedbackService::class)]
-class FeedbackServiceTest extends TestCase
+#[RunTestsInSeparateProcesses]
+final class FeedbackServiceTest extends AbstractIntegrationTestCase
 {
     private FeedbackService $feedbackService;
 
-    private HttpClientInterface&MockObject $httpClient;
-
-    private DifySettingRepository&MockObject $settingRepository;
-
-    private MessageFeedbackRepository&MockObject $feedbackRepository;
-
-    private ClockInterface&MockObject $clock;
-
-    private EntityManagerInterface&MockObject $entityManager;
-
-    protected function setUp(): void
+    protected function onSetUp(): void
     {
-        $this->httpClient = $this->createMock(HttpClientInterface::class);
-        $this->settingRepository = $this->createMock(DifySettingRepository::class);
-        $this->feedbackRepository = $this->createMock(MessageFeedbackRepository::class);
-        $this->clock = $this->createMock(ClockInterface::class);
-        $this->entityManager = $this->createMock(EntityManagerInterface::class);
-
-        $this->feedbackService = new FeedbackService(
-            $this->httpClient,
-            $this->settingRepository,
-            $this->feedbackRepository,
-            $this->clock,
-            $this->entityManager
-        );
+        $this->feedbackService = self::getService(FeedbackService::class);
     }
 
-    /**
-     * 测试创建消息反馈功能
-     */
-    public function testCreateFeedback(): void
+    public function testServiceCanBeInstantiated(): void
     {
-        $messageId = 'message-123';
-        $user = 'anonymous';
-        $rating = 'like';
-
-        // 验证服务实例创建正确
         $this->assertInstanceOf(FeedbackService::class, $this->feedbackService);
-
-        // 这里应该mock HTTP客户端和配置
-        // 由于当前没有具体实现，先创建基本结构
-        $this->assertTrue(true, '创建消息反馈服务测试结构已创建');
-    }
-
-    /**
-     * 测试获取反馈列表功能
-     */
-    public function testGetFeedbacks(): void
-    {
-        $page = 1;
-        $limit = 20;
-
-        // 验证服务实例存在
-        $this->assertInstanceOf(FeedbackService::class, $this->feedbackService);
-
-        $this->assertTrue(true, '获取反馈列表测试结构已创建');
     }
 
     public function testSubmitFeedbackMethodExists(): void
@@ -145,5 +93,73 @@ class FeedbackServiceTest extends TestCase
         $this->assertTrue($reflection->hasMethod('cleanupOldFeedbacks'));
         $method = $reflection->getMethod('cleanupOldFeedbacks');
         $this->assertTrue($method->isPublic());
+    }
+
+    public function testGetMessageFeedbacksMethodExists(): void
+    {
+        $reflection = new \ReflectionClass($this->feedbackService);
+        $this->assertTrue($reflection->hasMethod('getMessageFeedbacks'));
+        $method = $reflection->getMethod('getMessageFeedbacks');
+        $this->assertTrue($method->isPublic());
+    }
+
+    public function testGetUserFeedbacksMethodExists(): void
+    {
+        $reflection = new \ReflectionClass($this->feedbackService);
+        $this->assertTrue($reflection->hasMethod('getUserFeedbacks'));
+        $method = $reflection->getMethod('getUserFeedbacks');
+        $this->assertTrue($method->isPublic());
+    }
+
+    public function testGetAllFeedbacksMethodExists(): void
+    {
+        $reflection = new \ReflectionClass($this->feedbackService);
+        $this->assertTrue($reflection->hasMethod('getAllFeedbacks'));
+        $method = $reflection->getMethod('getAllFeedbacks');
+        $this->assertTrue($method->isPublic());
+    }
+
+    public function testGetFeedbacksMethodExists(): void
+    {
+        $reflection = new \ReflectionClass($this->feedbackService);
+        $this->assertTrue($reflection->hasMethod('getFeedbacks'));
+        $method = $reflection->getMethod('getFeedbacks');
+        $this->assertTrue($method->isPublic());
+    }
+
+    public function testGetFeedbackStatsMethodExists(): void
+    {
+        $reflection = new \ReflectionClass($this->feedbackService);
+        $this->assertTrue($reflection->hasMethod('getFeedbackStats'));
+        $method = $reflection->getMethod('getFeedbackStats');
+        $this->assertTrue($method->isPublic());
+    }
+
+    public function testGetNegativeFeedbackAnalysisMethodExists(): void
+    {
+        $reflection = new \ReflectionClass($this->feedbackService);
+        $this->assertTrue($reflection->hasMethod('getNegativeFeedbackAnalysis'));
+        $method = $reflection->getMethod('getNegativeFeedbackAnalysis');
+        $this->assertTrue($method->isPublic());
+    }
+
+    public function testCreateFeedbackMethodExists(): void
+    {
+        $reflection = new \ReflectionClass($this->feedbackService);
+        $this->assertTrue($reflection->hasMethod('createFeedback'));
+        $method = $reflection->getMethod('createFeedback');
+        $this->assertTrue($method->isPublic());
+    }
+
+    public function testServiceIsFinal(): void
+    {
+        $reflection = new \ReflectionClass(FeedbackService::class);
+        $this->assertTrue($reflection->isFinal());
+    }
+
+    public function testServiceIsReadonly(): void
+    {
+        $reflection = new \ReflectionClass(FeedbackService::class);
+        $this->assertTrue($reflection->isReadOnly());
     }
 }

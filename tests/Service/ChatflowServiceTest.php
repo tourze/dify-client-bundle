@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Tourze\DifyClientBundle\Tests\Service;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Tourze\DifyClientBundle\Service\ChatflowService;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractIntegrationTestCase;
 
 /**
  * ChatflowService 测试类
@@ -15,23 +16,26 @@ use Tourze\DifyClientBundle\Service\ChatflowService;
  * @internal
  */
 #[CoversClass(ChatflowService::class)]
-class ChatflowServiceTest extends TestCase
+#[RunTestsInSeparateProcesses]
+final class ChatflowServiceTest extends AbstractIntegrationTestCase
 {
+    private ChatflowService $chatflowService;
+
+    protected function onSetUp(): void
+    {
+        $this->chatflowService = self::getService(ChatflowService::class);
+    }
+
     /**
      * 测试发送对话消息功能
      */
     public function testSendChatMessage(): void
     {
-        $query = 'Hello';
-        $conversationId = null;
-        $user = 'anonymous';
-        $responseMode = 'blocking';
-        $inputs = [];
-        $files = [];
+        // 验证服务实例化正确
+        $this->assertInstanceOf(ChatflowService::class, $this->chatflowService);
 
-        // 这里应该mock HTTP客户端和配置
-        // 由于当前没有具体实现，先创建基本结构
-        $this->assertTrue(true, '发送对话消息服务测试结构已创建');
+        // 测试服务方法存在
+        $this->assertTrue(method_exists($this->chatflowService, 'sendMessage'));
     }
 
     /**
@@ -39,9 +43,7 @@ class ChatflowServiceTest extends TestCase
      */
     public function testStopResponse(): void
     {
-        $taskId = 'task-123';
-
-        $this->assertTrue(true, '停止响应测试结构已创建');
+        $this->assertInstanceOf(ChatflowService::class, $this->chatflowService);
     }
 
     /**
@@ -49,11 +51,7 @@ class ChatflowServiceTest extends TestCase
      */
     public function testGetConversations(): void
     {
-        $user = 'anonymous';
-        $lastId = null;
-        $limit = 20;
-
-        $this->assertTrue(true, '获取会话列表测试结构已创建');
+        $this->assertInstanceOf(ChatflowService::class, $this->chatflowService);
     }
 
     /**
@@ -61,10 +59,7 @@ class ChatflowServiceTest extends TestCase
      */
     public function testDeleteConversation(): void
     {
-        $conversationId = 'conv-123';
-        $user = 'anonymous';
-
-        $this->assertTrue(true, '删除会话测试结构已创建');
+        $this->assertInstanceOf(ChatflowService::class, $this->chatflowService);
     }
 
     /**
@@ -72,11 +67,7 @@ class ChatflowServiceTest extends TestCase
      */
     public function testRenameConversation(): void
     {
-        $conversationId = 'conv-123';
-        $name = 'New Name';
-        $user = 'anonymous';
-
-        $this->assertTrue(true, '会话重命名测试结构已创建');
+        $this->assertInstanceOf(ChatflowService::class, $this->chatflowService);
     }
 
     /**
@@ -84,12 +75,7 @@ class ChatflowServiceTest extends TestCase
      */
     public function testGetConversationMessages(): void
     {
-        $conversationId = 'conv-123';
-        $user = 'anonymous';
-        $firstId = null;
-        $limit = 20;
-
-        $this->assertTrue(true, '获取会话历史消息测试结构已创建');
+        $this->assertInstanceOf(ChatflowService::class, $this->chatflowService);
     }
 
     /**
@@ -97,10 +83,7 @@ class ChatflowServiceTest extends TestCase
      */
     public function testGetConversationVariables(): void
     {
-        $conversationId = 'conv-123';
-        $user = 'anonymous';
-
-        $this->assertTrue(true, '获取对话变量测试结构已创建');
+        $this->assertInstanceOf(ChatflowService::class, $this->chatflowService);
     }
 
     /**
@@ -108,9 +91,7 @@ class ChatflowServiceTest extends TestCase
      */
     public function testGetAppInfo(): void
     {
-        $user = 'anonymous';
-
-        $this->assertTrue(true, '获取应用信息测试结构已创建');
+        $this->assertInstanceOf(ChatflowService::class, $this->chatflowService);
     }
 
     /**
@@ -118,9 +99,7 @@ class ChatflowServiceTest extends TestCase
      */
     public function testGetAppParameters(): void
     {
-        $user = 'anonymous';
-
-        $this->assertTrue(true, '获取应用参数测试结构已创建');
+        $this->assertInstanceOf(ChatflowService::class, $this->chatflowService);
     }
 
     /**
@@ -128,9 +107,7 @@ class ChatflowServiceTest extends TestCase
      */
     public function testGetAppSite(): void
     {
-        $user = 'anonymous';
-
-        $this->assertTrue(true, '获取应用站点配置测试结构已创建');
+        $this->assertInstanceOf(ChatflowService::class, $this->chatflowService);
     }
 
     public function testCreateNewConversation(): void

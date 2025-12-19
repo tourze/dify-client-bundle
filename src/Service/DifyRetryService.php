@@ -15,7 +15,7 @@ use Tourze\DifyClientBundle\Message\RetryFailedMessage;
 use Tourze\DifyClientBundle\Repository\FailedMessageRepository;
 use Tourze\DifyClientBundle\Repository\RequestTaskRepository;
 
-readonly class DifyRetryService
+final readonly class DifyRetryService
 {
     public function __construct(
         private FailedMessageRepository $failedMessageRepository,

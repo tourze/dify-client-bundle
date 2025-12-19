@@ -15,7 +15,7 @@ use Tourze\PHPUnitSymfonyKernelTest\Attribute\AsRepository;
  * @extends ServiceEntityRepository<RequestTask>
  */
 #[AsRepository(entityClass: RequestTask::class)]
-class RequestTaskRepository extends ServiceEntityRepository
+final class RequestTaskRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

@@ -5,44 +5,29 @@ declare(strict_types=1);
 namespace Tourze\DifyClientBundle\Tests\Service;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Tourze\DifyClientBundle\Repository\DifySettingRepository;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Tourze\DifyClientBundle\Service\DocumentHttpClient;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractIntegrationTestCase;
 
 /**
  * @internal
  */
 #[CoversClass(DocumentHttpClient::class)]
-final class DocumentHttpClientTest extends TestCase
+#[RunTestsInSeparateProcesses]
+final class DocumentHttpClientTest extends AbstractIntegrationTestCase
 {
     private DocumentHttpClient $documentHttpClient;
 
-    private HttpClientInterface $httpClient;
-
-    private DifySettingRepository $settingRepository;
-
-    protected function setUp(): void
+    protected function onSetUp(): void
     {
-        parent::setUp();
-
-        $this->httpClient = $this->createMock(HttpClientInterface::class);
-        $this->settingRepository = $this->createMock(DifySettingRepository::class);
-
-        $this->documentHttpClient = new DocumentHttpClient(
-            $this->httpClient,
-            $this->settingRepository
-        );
+        $this->documentHttpClient = self::getService(DocumentHttpClient::class);
     }
 
-    #[Test]
     public function testServiceCanBeInstantiated(): void
     {
         $this->assertInstanceOf(DocumentHttpClient::class, $this->documentHttpClient);
     }
 
-    #[Test]
     public function testServiceHasRequiredMethods(): void
     {
         $reflection = new \ReflectionClass($this->documentHttpClient);
@@ -55,7 +40,6 @@ final class DocumentHttpClientTest extends TestCase
         $this->assertTrue($reflection->hasMethod('getDocument'));
     }
 
-    #[Test]
     public function testServiceConstructorDependencies(): void
     {
         $reflection = new \ReflectionClass($this->documentHttpClient);

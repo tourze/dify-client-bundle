@@ -27,7 +27,7 @@ use Tourze\DifyClientBundle\Repository\WorkflowTaskRepository;
  * 提供工作流的执行、监控、日志管理等功能
  * 对应 API: POST /workflows/run, GET /workflows/{workflow_id}/logs
  */
-readonly class WorkflowService
+final readonly class WorkflowService
 {
     public function __construct(
         private HttpClientInterface $httpClient,
@@ -235,8 +235,8 @@ readonly class WorkflowService
     public function getWorkflowLogs(WorkflowExecution $execution, int $limit = 100, int $offset = 0): array
     {
         return $this->logRepository->findBy(
-            ['execution' => $execution],
-            ['createdAt' => 'ASC'],
+            ['workflowExecution' => $execution],
+            ['createTime' => 'ASC'],
             $limit,
             $offset
         );
@@ -274,7 +274,7 @@ readonly class WorkflowService
     {
         return $this->executionRepository->findBy(
             ['userId' => $userId],
-            ['createdAt' => 'DESC'],
+            ['createTime' => 'DESC'],
             $limit,
             $offset
         );
@@ -289,7 +289,7 @@ readonly class WorkflowService
     {
         return $this->executionRepository->findBy(
             ['workflowId' => $workflowId],
-            ['createdAt' => 'DESC'],
+            ['createTime' => 'DESC'],
             $limit,
             $offset
         );
@@ -365,8 +365,8 @@ readonly class WorkflowService
 
         /** @var array<string, mixed> */
         return $qb
-            ->select('DATE(e.createdAt) as date, COUNT(e.id) as count')
-            ->where('e.createdAt >= :sevenDaysAgo')
+            ->select('DATE(e.createTime) as date, COUNT(e.id) as count')
+            ->where('e.createTime >= :sevenDaysAgo')
             ->setParameter('sevenDaysAgo', $sevenDaysAgo)
             ->groupBy('date')
             ->orderBy('date', 'ASC')
@@ -536,7 +536,7 @@ readonly class WorkflowService
     private function buildExpiredExecutionsQuery(\DateTimeInterface $expiredDate): QueryBuilder
     {
         return $this->executionRepository->createQueryBuilder('e')
-            ->where('e.createdAt < :expiredDate')
+            ->where('e.createTime < :expiredDate')
             ->andWhere('e.status IN (:finalStates)')
             ->setParameter('expiredDate', $expiredDate)
             ->setParameter('finalStates', $this->getFinalStates())

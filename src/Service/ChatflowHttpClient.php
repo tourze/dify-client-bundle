@@ -14,7 +14,7 @@ use Tourze\DifyClientBundle\Repository\DifySettingRepository;
 /**
  * 聊天流HTTP客户端 - 处理所有与Dify Chatflow API的HTTP通信
  */
-readonly class ChatflowHttpClient
+final readonly class ChatflowHttpClient
 {
     public function __construct(
         private HttpClientInterface $httpClient,

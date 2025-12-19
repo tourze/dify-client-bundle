@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tourze\DifyClientBundle\Message;
 
-class RetryFailedMessage
+final class RetryFailedMessage
 {
     /**
      * @param array<string, mixed> $context

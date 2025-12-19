@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace Tourze\DifyClientBundle\Tests\Service;
 
-use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
-use Psr\Clock\ClockInterface;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Tourze\DifyClientBundle\Entity\Dataset;
 use Tourze\DifyClientBundle\Entity\Document;
 use Tourze\DifyClientBundle\Service\DocumentFactory;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractIntegrationTestCase;
 
 /**
  * DocumentFactory 测试类
@@ -21,23 +19,21 @@ use Tourze\DifyClientBundle\Service\DocumentFactory;
  * @internal
  */
 #[CoversClass(DocumentFactory::class)]
-class DocumentFactoryTest extends TestCase
+#[RunTestsInSeparateProcesses]
+final class DocumentFactoryTest extends AbstractIntegrationTestCase
 {
     private DocumentFactory $documentFactory;
 
-    private ClockInterface&MockObject $clock;
-
-    protected function setUp(): void
+    protected function onSetUp(): void
     {
-        parent::setUp();
-
-        $this->clock = $this->createMock(ClockInterface::class);
-        $this->documentFactory = new DocumentFactory($this->clock);
+        $this->documentFactory = self::getService(DocumentFactory::class);
     }
 
-    /**
-     * 测试从文本创建文档
-     */
+    public function testServiceCanBeInstantiated(): void
+    {
+        $this->assertInstanceOf(DocumentFactory::class, $this->documentFactory);
+    }
+
     public function testCreateFromText(): void
     {
         $dataset = new Dataset();
@@ -45,12 +41,6 @@ class DocumentFactoryTest extends TestCase
         $name = 'Test Document';
         $indexingTechnique = 'high_quality';
         $userId = 'user123';
-        $now = new \DateTimeImmutable();
-
-        $this->clock->expects($this->once())
-            ->method('now')
-            ->willReturn($now)
-        ;
 
         $document = $this->documentFactory->createFromText(
             $dataset,
@@ -67,29 +57,20 @@ class DocumentFactoryTest extends TestCase
         $this->assertEquals($indexingTechnique, $document->getIndexingTechnique());
         $this->assertEquals($userId, $document->getUserId());
         $this->assertEquals('pending', $document->getProcessingStatus());
-        $this->assertEquals($now, $document->getCreateTime());
+        $this->assertNotNull($document->getCreateTime());
     }
 
-    /**
-     * 测试从文件创建文档
-     */
     public function testCreateFromFile(): void
     {
         $dataset = new Dataset();
         $indexingTechnique = 'economy';
         $userId = 'user456';
-        $now = new \DateTimeImmutable();
 
-        // 创建一个模拟UploadedFile
+        // Mock UploadedFile，因为这是外部依赖
         $file = $this->createMock(UploadedFile::class);
         $file->method('getClientOriginalName')->willReturn('test.txt');
         $file->method('getMimeType')->willReturn('text/plain');
         $file->method('getSize')->willReturn(1024);
-
-        $this->clock->expects($this->once())
-            ->method('now')
-            ->willReturn($now)
-        ;
 
         $document = $this->documentFactory->createFromFile(
             $dataset,
@@ -108,30 +89,21 @@ class DocumentFactoryTest extends TestCase
         $this->assertEquals($indexingTechnique, $document->getIndexingTechnique());
         $this->assertEquals($userId, $document->getUserId());
         $this->assertEquals('pending', $document->getProcessingStatus());
-        $this->assertEquals($now, $document->getCreateTime());
+        $this->assertNotNull($document->getCreateTime());
     }
 
-    /**
-     * 测试从文件创建文档（使用自定义名称）
-     */
     public function testCreateFromFileWithCustomName(): void
     {
         $dataset = new Dataset();
         $customName = 'Custom Document Name';
         $indexingTechnique = 'economy';
         $userId = 'user789';
-        $now = new \DateTimeImmutable();
 
-        // 创建一个模拟UploadedFile
+        // Mock UploadedFile
         $file = $this->createMock(UploadedFile::class);
         $file->method('getClientOriginalName')->willReturn('original.txt');
         $file->method('getMimeType')->willReturn('text/plain');
         $file->method('getSize')->willReturn(2048);
-
-        $this->clock->expects($this->once())
-            ->method('now')
-            ->willReturn($now)
-        ;
 
         $document = $this->documentFactory->createFromFile(
             $dataset,

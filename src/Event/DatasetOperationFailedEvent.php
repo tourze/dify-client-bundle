@@ -11,7 +11,7 @@ use Tourze\DifyClientBundle\Entity\Dataset;
 /**
  * 数据集操作失败事件
  */
-class DatasetOperationFailedEvent extends Event
+final class DatasetOperationFailedEvent extends Event
 {
     /**
      * @param array<string, mixed> $metadata

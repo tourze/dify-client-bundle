@@ -10,7 +10,7 @@ use Tourze\DifyClientBundle\Entity\AudioTranscription;
 /**
  * 音频转录成功事件
  */
-class AudioTranscriptionSuccessEvent extends Event
+final class AudioTranscriptionSuccessEvent extends Event
 {
     /**
      * @param array<string, mixed> $metadata

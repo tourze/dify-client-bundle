@@ -44,6 +44,7 @@ final class RetrieverResourceRepositoryTest extends AbstractRepositoryTestCase
         $retrieverResource->setDocumentId('test-doc-' . uniqid());
         $retrieverResource->setDocumentName('Test Document');
         $retrieverResource->setSegmentId('test-segment-' . uniqid());
+        $retrieverResource->setRetrievedAt(new \DateTimeImmutable());
 
         return $retrieverResource;
     }

@@ -16,7 +16,7 @@ use Tourze\PHPUnitSymfonyKernelTest\Attribute\AsRepository;
  * @extends ServiceEntityRepository<Annotation>
  */
 #[AsRepository(entityClass: Annotation::class)]
-class AnnotationRepository extends ServiceEntityRepository
+final class AnnotationRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

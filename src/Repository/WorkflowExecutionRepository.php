@@ -17,7 +17,7 @@ use Tourze\PHPUnitSymfonyKernelTest\Attribute\AsRepository;
  * @extends ServiceEntityRepository<WorkflowExecution>
  */
 #[AsRepository(entityClass: WorkflowExecution::class)]
-class WorkflowExecutionRepository extends ServiceEntityRepository
+final class WorkflowExecutionRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

@@ -12,7 +12,7 @@ use Tourze\DifyClientBundle\Exception\DifyRuntimeException;
  *
  * 提供Controller层的API适配方法，将业务逻辑委托给DatasetService
  */
-readonly class DatasetApiAdapter
+final readonly class DatasetApiAdapter
 {
     public function __construct(
         private DatasetService $datasetService,

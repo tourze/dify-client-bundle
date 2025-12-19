@@ -29,7 +29,7 @@ use Tourze\DifyClientBundle\Repository\SuggestedQuestionRepository;
  *
  * 核心业务逻辑，HTTP通信由ChatflowHttpClient处理
  */
-readonly class ChatflowService
+final readonly class ChatflowService
 {
     private ChatflowHttpClient $httpClient;
 

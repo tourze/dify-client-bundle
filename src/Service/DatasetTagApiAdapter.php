@@ -14,7 +14,7 @@ use Tourze\DifyClientBundle\Repository\DatasetTagRepository;
  *
  * 提供标签管理的API适配方法
  */
-readonly class DatasetTagApiAdapter
+final readonly class DatasetTagApiAdapter
 {
     public function __construct(
         private DatasetService $datasetService,

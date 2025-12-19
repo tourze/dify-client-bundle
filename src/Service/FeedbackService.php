@@ -22,7 +22,7 @@ use Tourze\DifyClientBundle\Repository\MessageFeedbackRepository;
  * 处理消息的点赞、点踩等用户反馈功能
  * 对应 API: POST /messages/{message_id}/feedbacks
  */
-readonly class FeedbackService
+final readonly class FeedbackService
 {
     public function __construct(
         private HttpClientInterface $httpClient,
@@ -167,7 +167,7 @@ readonly class FeedbackService
     {
         return $this->feedbackRepository->findBy(
             ['message' => $message],
-            ['createdAt' => 'DESC']
+            ['createTime' => 'DESC']
         );
     }
 
@@ -180,7 +180,7 @@ readonly class FeedbackService
     {
         return $this->feedbackRepository->findBy(
             ['userId' => $userId],
-            ['createdAt' => 'DESC'],
+            ['createTime' => 'DESC'],
             $limit,
             $offset
         );
@@ -200,7 +200,7 @@ readonly class FeedbackService
 
         return $this->feedbackRepository->findBy(
             $criteria,
-            ['createdAt' => 'DESC'],
+            ['createTime' => 'DESC'],
             $limit,
             $offset
         );
@@ -280,8 +280,8 @@ readonly class FeedbackService
         // 按日期统计最近7天的反馈
         $sevenDaysAgo = $this->clock->now()->modify('-7 days');
         $dailyStats = $qb
-            ->select('DATE(f.createdAt) as date, f.rating, COUNT(f.id) as count')
-            ->where('f.createdAt >= :sevenDaysAgo')
+            ->select('DATE(f.createTime) as date, f.rating, COUNT(f.id) as count')
+            ->where('f.createTime >= :sevenDaysAgo')
             ->setParameter('sevenDaysAgo', $sevenDaysAgo)
             ->groupBy('date', 'f.rating')
             ->orderBy('date', 'ASC')
@@ -350,7 +350,7 @@ readonly class FeedbackService
 
         $qb = $this->feedbackRepository->createQueryBuilder('f');
         $expiredFeedbacks = $qb
-            ->where('f.createdAt < :expiredDate')
+            ->where('f.createTime < :expiredDate')
             ->setParameter('expiredDate', $expiredDate)
             ->getQuery()
             ->getResult()

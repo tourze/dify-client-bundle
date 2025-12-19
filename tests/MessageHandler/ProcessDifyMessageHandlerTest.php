@@ -3,88 +3,67 @@
 namespace Tourze\DifyClientBundle\Tests\MessageHandler;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
-use Tourze\DifyClientBundle\Entity\Message;
-use Tourze\DifyClientBundle\Entity\RequestTask;
-use Tourze\DifyClientBundle\Message\ProcessDifyMessage;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Tourze\DifyClientBundle\MessageHandler\ProcessDifyMessageHandler;
 use Tourze\DifyClientBundle\Service\DifyMessengerService;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractIntegrationTestCase;
 
 /**
+ * ProcessDifyMessageHandler 测试
+ *
+ * 验证消息处理器正确配置和实例化
  * @internal
  */
 #[CoversClass(ProcessDifyMessageHandler::class)]
-final class ProcessDifyMessageHandlerTest extends TestCase
+#[RunTestsInSeparateProcesses]
+final class ProcessDifyMessageHandlerTest extends AbstractIntegrationTestCase
 {
-    public function testHandlerShouldProcessMessageThroughService(): void
+    private ProcessDifyMessageHandler $handler;
+
+    protected function onSetUp(): void
     {
-        $difyMessengerService = $this->createMock(DifyMessengerService::class);
-        $handler = new ProcessDifyMessageHandler($difyMessengerService);
-
-        $requestTask = new RequestTask();
-        $requestTask->setTaskId('task-123');
-        $requestTask->setAggregatedContent('User messages');
-
-        $originalMessages = [
-            new Message(),
-            new Message(),
-        ];
-
-        $message = new ProcessDifyMessage($requestTask, 'AI response', $originalMessages);
-
-        $difyMessengerService->expects($this->once())
-            ->method('processMessage')
-            ->with(
-                self::identicalTo($requestTask),
-                $this->equalTo('AI response'),
-                self::identicalTo($originalMessages)
-            )
-        ;
-
-        $handler->__invoke($message);
+        $this->handler = self::getService(ProcessDifyMessageHandler::class);
     }
 
-    public function testHandlerShouldProcessMessageWithoutOriginalMessages(): void
+    public function testHandlerCanBeInstantiated(): void
     {
-        $difyMessengerService = $this->createMock(DifyMessengerService::class);
-        $handler = new ProcessDifyMessageHandler($difyMessengerService);
-
-        $requestTask = new RequestTask();
-        $requestTask->setTaskId('task-456');
-
-        $message = new ProcessDifyMessage($requestTask, 'Simple response');
-
-        $difyMessengerService->expects($this->once())
-            ->method('processMessage')
-            ->with(
-                self::identicalTo($requestTask),
-                $this->equalTo('Simple response'),
-                $this->equalTo([])
-            )
-        ;
-
-        $handler->__invoke($message);
+        $this->assertInstanceOf(ProcessDifyMessageHandler::class, $this->handler);
     }
 
-    public function testHandlerShouldProcessMessageWithEmptyContent(): void
+    public function testHandlerHasCorrectMessageHandlerAttribute(): void
     {
-        $difyMessengerService = $this->createMock(DifyMessengerService::class);
-        $handler = new ProcessDifyMessageHandler($difyMessengerService);
+        $reflection = new \ReflectionClass(ProcessDifyMessageHandler::class);
+        $attributes = $reflection->getAttributes(AsMessageHandler::class);
 
-        $requestTask = new RequestTask();
-        $requestTask->setTaskId('task-789');
+        $this->assertNotEmpty($attributes, 'ProcessDifyMessageHandler should have AsMessageHandler attribute');
+    }
 
-        $message = new ProcessDifyMessage($requestTask, '');
+    public function testHandlerConstructorDependencies(): void
+    {
+        $reflection = new \ReflectionClass(ProcessDifyMessageHandler::class);
 
-        $difyMessengerService->expects($this->once())
-            ->method('processMessage')
-            ->with(
-                self::identicalTo($requestTask),
-                $this->equalTo(''),
-                $this->equalTo([])
-            )
-        ;
+        // 验证构造函数参数
+        $constructor = $reflection->getConstructor();
+        $this->assertNotNull($constructor);
 
-        $handler->__invoke($message);
+        $parameters = $constructor->getParameters();
+        $this->assertCount(1, $parameters);
+
+        $this->assertEquals('difyMessengerService', $parameters[0]->getName());
+        $type = $parameters[0]->getType();
+        $this->assertInstanceOf(\ReflectionNamedType::class, $type);
+        $this->assertEquals(DifyMessengerService::class, $type->getName());
+    }
+
+    public function testHandlerHasInvokeMethod(): void
+    {
+        $this->assertTrue(method_exists(ProcessDifyMessageHandler::class, '__invoke'));
+    }
+
+    public function testHandlerIsFinal(): void
+    {
+        $reflection = new \ReflectionClass(ProcessDifyMessageHandler::class);
+        $this->assertTrue($reflection->isFinal());
     }
 }

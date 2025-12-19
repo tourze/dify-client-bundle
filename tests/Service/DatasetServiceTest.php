@@ -5,17 +5,11 @@ declare(strict_types=1);
 namespace Tourze\DifyClientBundle\Tests\Service;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
-use Psr\Clock\ClockInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Tourze\DifyClientBundle\Entity\Dataset;
 use Tourze\DifyClientBundle\Entity\RetrieverResource;
-use Tourze\DifyClientBundle\Repository\DatasetRepository;
-use Tourze\DifyClientBundle\Repository\DatasetTagRepository;
-use Tourze\DifyClientBundle\Repository\DifySettingRepository;
-use Tourze\DifyClientBundle\Repository\RetrieverResourceRepository;
 use Tourze\DifyClientBundle\Service\DatasetService;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractIntegrationTestCase;
 
 /**
  * DatasetService 集成测试
@@ -24,43 +18,12 @@ use Tourze\DifyClientBundle\Service\DatasetService;
  * @internal
  */
 #[CoversClass(DatasetService::class)]
-class DatasetServiceTest extends TestCase
+#[RunTestsInSeparateProcesses]
+final class DatasetServiceTest extends AbstractIntegrationTestCase
 {
-    private DatasetService $service;
-
-    private MockObject $eventDispatcher;
-
-    private MockObject $settingRepository;
-
-    private MockObject $datasetRepository;
-
-    private MockObject $tagRepository;
-
-    private MockObject $retrieverResourceRepository;
-
-    private MockObject $clock;
-
-    protected function setUp(): void
+    protected function onSetUp(): void
     {
-        parent::setUp();
-
-        // 初始化 Mock 对象
-        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
-        $this->settingRepository = $this->createMock(DifySettingRepository::class);
-        $this->datasetRepository = $this->createMock(DatasetRepository::class);
-        $this->tagRepository = $this->createMock(DatasetTagRepository::class);
-        $this->retrieverResourceRepository = $this->createMock(RetrieverResourceRepository::class);
-        $this->clock = $this->createMock(ClockInterface::class);
-
-        // 创建 DatasetService 实例
-        $this->service = new DatasetService(
-            $this->eventDispatcher,
-            $this->settingRepository,
-            $this->datasetRepository,
-            $this->tagRepository,
-            $this->retrieverResourceRepository,
-            $this->clock,
-        );
+        // 空实现，测试不需要数据库
     }
 
     /**
@@ -71,6 +34,8 @@ class DatasetServiceTest extends TestCase
     public function testCreateRetrieverResourceWithFloatScore(): void
     {
         // Arrange
+        $service = self::getService(DatasetService::class);
+
         $dataset = new Dataset();
         $dataset->setId('dataset-123');
         $dataset->setName('Test Dataset');
@@ -82,12 +47,12 @@ class DatasetServiceTest extends TestCase
         ];
 
         // Act：通过反射调用 private 方法
-        $reflection = new \ReflectionClass($this->service);
+        $reflection = new \ReflectionClass($service);
         $method = $reflection->getMethod('createRetrieverResource');
         $method->setAccessible(true);
 
         /** @var RetrieverResource $resource */
-        $resource = $method->invoke($this->service, $dataset, 'test query', $item);
+        $resource = $method->invoke($service, $dataset, 'test query', $item);
 
         // Assert
         $this->assertInstanceOf(RetrieverResource::class, $resource);
@@ -106,6 +71,8 @@ class DatasetServiceTest extends TestCase
     public function testCreateRetrieverResourceWithNumericStringScore(): void
     {
         // Arrange
+        $service = self::getService(DatasetService::class);
+
         $dataset = new Dataset();
         $dataset->setId('dataset-456');
 
@@ -116,12 +83,12 @@ class DatasetServiceTest extends TestCase
         ];
 
         // Act
-        $reflection = new \ReflectionClass($this->service);
+        $reflection = new \ReflectionClass($service);
         $method = $reflection->getMethod('createRetrieverResource');
         $method->setAccessible(true);
 
         /** @var RetrieverResource $resource */
-        $resource = $method->invoke($this->service, $dataset, 'query', $item);
+        $resource = $method->invoke($service, $dataset, 'query', $item);
 
         // Assert
         $this->assertSame(0.85, $resource->getScore());
@@ -135,6 +102,8 @@ class DatasetServiceTest extends TestCase
     public function testCreateRetrieverResourceWithIntScore(): void
     {
         // Arrange
+        $service = self::getService(DatasetService::class);
+
         $dataset = new Dataset();
         $item = [
             'content' => 'Content',
@@ -143,12 +112,12 @@ class DatasetServiceTest extends TestCase
         ];
 
         // Act
-        $reflection = new \ReflectionClass($this->service);
+        $reflection = new \ReflectionClass($service);
         $method = $reflection->getMethod('createRetrieverResource');
         $method->setAccessible(true);
 
         /** @var RetrieverResource $resource */
-        $resource = $method->invoke($this->service, $dataset, 'query', $item);
+        $resource = $method->invoke($service, $dataset, 'query', $item);
 
         // Assert
         $this->assertSame(1.0, $resource->getScore());
@@ -162,6 +131,8 @@ class DatasetServiceTest extends TestCase
     public function testCreateRetrieverResourceWithMissingScore(): void
     {
         // Arrange
+        $service = self::getService(DatasetService::class);
+
         $dataset = new Dataset();
         $item = [
             'content' => 'Content',
@@ -170,12 +141,12 @@ class DatasetServiceTest extends TestCase
         ];
 
         // Act
-        $reflection = new \ReflectionClass($this->service);
+        $reflection = new \ReflectionClass($service);
         $method = $reflection->getMethod('createRetrieverResource');
         $method->setAccessible(true);
 
         /** @var RetrieverResource $resource */
-        $resource = $method->invoke($this->service, $dataset, 'query', $item);
+        $resource = $method->invoke($service, $dataset, 'query', $item);
 
         // Assert
         $this->assertSame(0.0, $resource->getScore());
@@ -189,6 +160,8 @@ class DatasetServiceTest extends TestCase
     public function testCreateRetrieverResourceWithInvalidScore(): void
     {
         // Arrange
+        $service = self::getService(DatasetService::class);
+
         $dataset = new Dataset();
         $item = [
             'content' => 'Content',
@@ -197,12 +170,12 @@ class DatasetServiceTest extends TestCase
         ];
 
         // Act
-        $reflection = new \ReflectionClass($this->service);
+        $reflection = new \ReflectionClass($service);
         $method = $reflection->getMethod('createRetrieverResource');
         $method->setAccessible(true);
 
         /** @var RetrieverResource $resource */
-        $resource = $method->invoke($this->service, $dataset, 'query', $item);
+        $resource = $method->invoke($service, $dataset, 'query', $item);
 
         // Assert：无效值应降级为 0.0
         $this->assertSame(0.0, $resource->getScore());
@@ -216,6 +189,8 @@ class DatasetServiceTest extends TestCase
     public function testCreateRetrieverResourceWithNullScore(): void
     {
         // Arrange
+        $service = self::getService(DatasetService::class);
+
         $dataset = new Dataset();
         $item = [
             'content' => 'Content',
@@ -224,12 +199,12 @@ class DatasetServiceTest extends TestCase
         ];
 
         // Act
-        $reflection = new \ReflectionClass($this->service);
+        $reflection = new \ReflectionClass($service);
         $method = $reflection->getMethod('createRetrieverResource');
         $method->setAccessible(true);
 
         /** @var RetrieverResource $resource */
-        $resource = $method->invoke($this->service, $dataset, 'query', $item);
+        $resource = $method->invoke($service, $dataset, 'query', $item);
 
         // Assert
         $this->assertSame(0.0, $resource->getScore());

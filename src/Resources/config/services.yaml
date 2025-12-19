@@ -1,51 +1,28 @@
 services:
+  # default configuration for services in *this* file
   _defaults:
-    autowire: true
-    autoconfigure: true
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    public: false
 
+  Tourze\DifyClientBundle\Controller\:
+    resource: '../../Controller/'
+  Tourze\DifyClientBundle\Command\:
+    resource: '../../Command/'
   Tourze\DifyClientBundle\Repository\:
-      resource: '../../Repository/'
-
-  # Service 服务
+    resource: '../../Repository/'
   Tourze\DifyClientBundle\Service\:
-    resource: '../../Service'
+    resource: '../../Service/'
+    public: true
+  Tourze\DifyClientBundle\Message\:
+    resource: '../../Message/'
+  Tourze\DifyClientBundle\MessageHandler\:
+    resource: '../../MessageHandler/'
+  Tourze\DifyClientBundle\Event\:
+    resource: '../../Event/'
 
+  # Explicit configuration for specific services
   Tourze\DifyClientBundle\Service\MessageAggregator:
     arguments:
       $aggregationTimeout: 30
-
-  Tourze\DifyClientBundle\Service\DifyMessengerService:
-    public: true
-
-  # MessageHandler 服务
-  Tourze\DifyClientBundle\MessageHandler\:
-    resource: '../../MessageHandler'
-
-  Tourze\DifyClientBundle\MessageHandler\ProcessDifyMessageHandler:
-    tags:
-      - { name: messenger.message_handler }
-
-  Tourze\DifyClientBundle\MessageHandler\RetryFailedMessageHandler:
-    tags:
-      - { name: messenger.message_handler }
-
-  # Command 服务 - 明确定义每个命令
-  Tourze\DifyClientBundle\Command\DifyHealthCommand:
-    tags: [ 'console.command' ]
-
-  Tourze\DifyClientBundle\Command\DifyRetryFailedCommand:
-    tags: [ 'console.command' ]
-
-  # Command Support 服务（辅助类，不是控制台命令）
-  Tourze\DifyClientBundle\Command\Support\:
-    resource: '../../Command/Support'
-
-  # Controller 服务
-  Tourze\DifyClientBundle\Controller\Admin\:
-    resource: '../../Controller/Admin'
-    tags: [ 'controller.service_arguments' ]
-
-  # Admin Menu 服务
-  Tourze\DifyClientBundle\Service\AdminMenu:
-    tags: [ 'easy-admin-menu.provider' ]
 

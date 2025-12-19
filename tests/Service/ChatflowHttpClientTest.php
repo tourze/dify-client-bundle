@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace Tourze\DifyClientBundle\Tests\Service;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Tourze\DifyClientBundle\Repository\DifySettingRepository;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Tourze\DifyClientBundle\Service\ChatflowHttpClient;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractIntegrationTestCase;
 
 /**
  * ChatflowHttpClient 测试类
@@ -18,47 +16,31 @@ use Tourze\DifyClientBundle\Service\ChatflowHttpClient;
  * @internal
  */
 #[CoversClass(ChatflowHttpClient::class)]
-class ChatflowHttpClientTest extends TestCase
+#[RunTestsInSeparateProcesses]
+final class ChatflowHttpClientTest extends AbstractIntegrationTestCase
 {
     private ChatflowHttpClient $chatflowHttpClient;
 
-    private HttpClientInterface&MockObject $httpClient;
-
-    private DifySettingRepository&MockObject $settingRepository;
-
-    protected function setUp(): void
+    protected function onSetUp(): void
     {
-        parent::setUp();
-
-        $this->httpClient = $this->createMock(HttpClientInterface::class);
-        $this->settingRepository = $this->createMock(DifySettingRepository::class);
-
-        $this->chatflowHttpClient = new ChatflowHttpClient(
-            $this->httpClient,
-            $this->settingRepository
-        );
+        $this->chatflowHttpClient = self::getService(ChatflowHttpClient::class);
     }
 
-    /**
-     * 测试服务实例化
-     */
-    public function testServiceInstantiation(): void
+    public function testServiceCanBeInstantiated(): void
     {
         $this->assertInstanceOf(ChatflowHttpClient::class, $this->chatflowHttpClient);
     }
 
-    /**
-     * 测试服务具有所需的依赖
-     */
-    public function testServiceHasRequiredDependencies(): void
+    public function testServiceHasRequiredMethods(): void
     {
-        // 这是一个基本的实例化测试，确保依赖注入正常工作
-        $this->assertTrue(true, 'ChatflowHttpClient service instantiated with all dependencies');
-    }
+        $reflection = new \ReflectionClass($this->chatflowHttpClient);
 
-    // 注意：完整的功能测试需要更多的设置和模拟
-    // 例如模拟 DifySetting 实体、HTTP 响应等
-    // 这里只提供基础的测试结构
+        $this->assertTrue($reflection->hasMethod('sendChatMessage'));
+        $this->assertTrue($reflection->hasMethod('sendStreamChatMessage'));
+        $this->assertTrue($reflection->hasMethod('stopResponse'));
+        $this->assertTrue($reflection->hasMethod('deleteConversation'));
+        $this->assertTrue($reflection->hasMethod('renameConversation'));
+    }
 
     public function testDeleteConversation(): void
     {

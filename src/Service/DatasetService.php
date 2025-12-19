@@ -24,7 +24,7 @@ use Tourze\DifyClientBundle\Repository\RetrieverResourceRepository;
  *
  * 核心业务逻辑，HTTP通信由DatasetHttpClient处理
  */
-readonly class DatasetService
+final readonly class DatasetService
 {
     private DatasetHttpClient $httpClient;
 

@@ -10,7 +10,7 @@ use Tourze\DifyClientBundle\Entity\DifySetting;
 use Tourze\DifyClientBundle\Repository\DifySettingRepository;
 
 #[Autoconfigure(public: true)]
-readonly class DifySettingService
+final readonly class DifySettingService
 {
     public function __construct(
         private DifySettingRepository $difySettingRepository,

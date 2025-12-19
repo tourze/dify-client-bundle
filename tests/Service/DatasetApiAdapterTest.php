@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Tourze\DifyClientBundle\Tests\Service;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Tourze\DifyClientBundle\Service\DatasetApiAdapter;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractIntegrationTestCase;
 
 /**
  * DatasetApiAdapter 测试类
@@ -15,8 +16,14 @@ use Tourze\DifyClientBundle\Service\DatasetApiAdapter;
  * @internal
  */
 #[CoversClass(DatasetApiAdapter::class)]
-class DatasetApiAdapterTest extends TestCase
+#[RunTestsInSeparateProcesses]
+final class DatasetApiAdapterTest extends AbstractIntegrationTestCase
 {
+    protected function onSetUp(): void
+    {
+        // 空实现，测试不需要数据库
+    }
+
     /**
      * 测试获取数据集列表功能
      */

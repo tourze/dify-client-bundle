@@ -16,7 +16,7 @@ use Tourze\PHPUnitSymfonyKernelTest\Attribute\AsRepository;
  * @extends ServiceEntityRepository<AppInfo>
  */
 #[AsRepository(entityClass: AppInfo::class)]
-class AppInfoRepository extends ServiceEntityRepository
+final class AppInfoRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

@@ -11,7 +11,7 @@ use Tourze\DifyClientBundle\Entity\AudioTranscription;
 /**
  * 音频转录失败事件
  */
-class AudioTranscriptionFailedEvent extends Event
+final class AudioTranscriptionFailedEvent extends Event
 {
     /**
      * @param array<string, mixed> $metadata

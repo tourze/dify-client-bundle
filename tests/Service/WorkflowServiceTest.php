@@ -4,20 +4,15 @@ declare(strict_types=1);
 
 namespace Tourze\DifyClientBundle\Tests\Service;
 
-use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
-use Psr\Clock\ClockInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Tourze\DifyClientBundle\Entity\WorkflowExecution;
 use Tourze\DifyClientBundle\Entity\WorkflowLog;
 use Tourze\DifyClientBundle\Exception\DifyException;
-use Tourze\DifyClientBundle\Repository\DifySettingRepository;
 use Tourze\DifyClientBundle\Repository\WorkflowExecutionRepository;
 use Tourze\DifyClientBundle\Repository\WorkflowLogRepository;
-use Tourze\DifyClientBundle\Repository\WorkflowTaskRepository;
 use Tourze\DifyClientBundle\Service\WorkflowService;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractIntegrationTestCase;
 
 /**
  * WorkflowService 测试类
@@ -26,70 +21,48 @@ use Tourze\DifyClientBundle\Service\WorkflowService;
  * @internal
  */
 #[CoversClass(WorkflowService::class)]
-class WorkflowServiceTest extends TestCase
+#[RunTestsInSeparateProcesses]
+final class WorkflowServiceTest extends AbstractIntegrationTestCase
 {
     private WorkflowService $workflowService;
 
-    private HttpClientInterface&MockObject $httpClient;
+    private WorkflowExecutionRepository $executionRepository;
 
-    private DifySettingRepository&MockObject $settingRepository;
+    private WorkflowLogRepository $logRepository;
 
-    private WorkflowExecutionRepository&MockObject $executionRepository;
-
-    private WorkflowTaskRepository&MockObject $taskRepository;
-
-    private WorkflowLogRepository&MockObject $logRepository;
-
-    private ClockInterface&MockObject $clock;
-
-    protected function setUp(): void
+    protected function onSetUp(): void
     {
-        $this->httpClient = $this->createMock(HttpClientInterface::class);
-        $this->settingRepository = $this->createMock(DifySettingRepository::class);
-        $this->executionRepository = $this->createMock(WorkflowExecutionRepository::class);
-        $this->taskRepository = $this->createMock(WorkflowTaskRepository::class);
-        $this->logRepository = $this->createMock(WorkflowLogRepository::class);
-        $this->clock = $this->createMock(ClockInterface::class);
-        $entityManager = $this->createMock(EntityManagerInterface::class);
-
-        $this->workflowService = new WorkflowService(
-            $this->httpClient,
-            $this->settingRepository,
-            $this->executionRepository,
-            $this->taskRepository,
-            $this->logRepository,
-            $this->clock,
-            $entityManager
-        );
+        $this->workflowService = self::getService(WorkflowService::class);
+        $this->executionRepository = self::getService(WorkflowExecutionRepository::class);
+        $this->logRepository = self::getService(WorkflowLogRepository::class);
     }
 
     public function testGetExecutionStatusShouldReturnCorrectExecution(): void
     {
-        $executionId = 'exec-123';
-        $mockExecution = $this->createMock(WorkflowExecution::class);
+        $em = self::getEntityManager();
 
-        $this->executionRepository
-            ->expects($this->once())
-            ->method('find')
-            ->with($executionId)
-            ->willReturn($mockExecution)
-        ;
+        // 创建真实的 WorkflowExecution 实体
+        $execution = new WorkflowExecution();
+        $execution->setWorkflowRunId('run-' . uniqid());
+        $execution->setWorkflowId('workflow-123');
+        $execution->setUserId('test-user');
+        $execution->setInputs([]);
+        $execution->setBlocking(true);
+
+        $em->persist($execution);
+        $em->flush();
+
+        $executionId = $execution->getId();
 
         $result = $this->workflowService->getExecutionStatus($executionId);
 
-        $this->assertSame($mockExecution, $result);
+        $this->assertInstanceOf(WorkflowExecution::class, $result);
+        $this->assertSame($executionId, $result->getId());
     }
 
     public function testGetExecutionStatusShouldReturnNullWhenNotFound(): void
     {
         $executionId = 'non-existent-execution';
-
-        $this->executionRepository
-            ->expects($this->once())
-            ->method('find')
-            ->with($executionId)
-            ->willReturn(null)
-        ;
 
         $result = $this->workflowService->getExecutionStatus($executionId);
 
@@ -98,86 +71,88 @@ class WorkflowServiceTest extends TestCase
 
     public function testGetWorkflowLogsShouldReturnCorrectLogs(): void
     {
-        $mockExecution = $this->createMock(WorkflowExecution::class);
-        $limit = 50;
-        $offset = 10;
-        $mockLogs = [$this->createMock(WorkflowLog::class)];
+        $em = self::getEntityManager();
 
-        $this->logRepository
-            ->expects($this->once())
-            ->method('findBy')
-            ->with(
-                ['execution' => $mockExecution],
-                ['createdAt' => 'ASC'],
-                $limit,
-                $offset
-            )
-            ->willReturn($mockLogs)
-        ;
+        // 创建真实的 WorkflowExecution 和 WorkflowLog
+        $execution = new WorkflowExecution();
+        $execution->setWorkflowRunId('run-' . uniqid());
+        $execution->setWorkflowId('workflow-123');
+        $execution->setUserId('test-user');
+        $execution->setInputs([]);
+        $execution->setBlocking(true);
 
-        $result = $this->workflowService->getWorkflowLogs($mockExecution, $limit, $offset);
+        $em->persist($execution);
 
-        $this->assertSame($mockLogs, $result);
+        $log = new WorkflowLog();
+        $log->setExecution($execution);
+        $log->setLevel('info');
+        $log->setMessage('workflow.started');
+        $log->setCategory('workflow');
+        $log->setLoggedAt(new \DateTimeImmutable());
+
+        $em->persist($log);
+        $em->flush();
+
+        $result = $this->workflowService->getWorkflowLogs($execution, 50, 0);
+
+        $this->assertIsArray($result);
+        $this->assertCount(1, $result);
+        $this->assertInstanceOf(WorkflowLog::class, $result[0]);
     }
 
     public function testGetUserExecutionsShouldReturnUserExecutions(): void
     {
-        $userId = 'user-123';
-        $limit = 20;
-        $offset = 5;
-        $mockExecutions = [$this->createMock(WorkflowExecution::class)];
+        $em = self::getEntityManager();
 
-        $this->executionRepository
-            ->expects($this->once())
-            ->method('findBy')
-            ->with(
-                ['userId' => $userId],
-                ['createdAt' => 'DESC'],
-                $limit,
-                $offset
-            )
-            ->willReturn($mockExecutions)
-        ;
+        $userId = 'test-user-123';
 
-        $result = $this->workflowService->getUserExecutions($userId, $limit, $offset);
+        // 创建用户的执行记录
+        $execution = new WorkflowExecution();
+        $execution->setWorkflowRunId('run-' . uniqid());
+        $execution->setWorkflowId('workflow-456');
+        $execution->setUserId($userId);
+        $execution->setInputs([]);
+        $execution->setBlocking(true);
 
-        $this->assertSame($mockExecutions, $result);
+        $em->persist($execution);
+        $em->flush();
+
+        $result = $this->workflowService->getUserExecutions($userId, 20, 0);
+
+        $this->assertIsArray($result);
+        $this->assertGreaterThanOrEqual(1, count($result));
+        $this->assertInstanceOf(WorkflowExecution::class, $result[0]);
+        $this->assertSame($userId, $result[0]->getUserId());
     }
 
     public function testGetWorkflowExecutionsShouldReturnWorkflowExecutions(): void
     {
-        $workflowId = 'workflow-123';
-        $limit = 30;
-        $offset = 0;
-        $mockExecutions = [$this->createMock(WorkflowExecution::class)];
+        $em = self::getEntityManager();
 
-        $this->executionRepository
-            ->expects($this->once())
-            ->method('findBy')
-            ->with(
-                ['workflowId' => $workflowId],
-                ['createdAt' => 'DESC'],
-                $limit,
-                $offset
-            )
-            ->willReturn($mockExecutions)
-        ;
+        $workflowId = 'workflow-789';
 
-        $result = $this->workflowService->getWorkflowExecutions($workflowId, $limit, $offset);
+        // 创建工作流执行记录
+        $execution = new WorkflowExecution();
+        $execution->setWorkflowRunId('run-' . uniqid());
+        $execution->setWorkflowId($workflowId);
+        $execution->setUserId('test-user');
+        $execution->setInputs([]);
+        $execution->setBlocking(true);
 
-        $this->assertSame($mockExecutions, $result);
+        $em->persist($execution);
+        $em->flush();
+
+        $result = $this->workflowService->getWorkflowExecutions($workflowId, 30, 0);
+
+        $this->assertIsArray($result);
+        $this->assertGreaterThanOrEqual(1, count($result));
+        $this->assertInstanceOf(WorkflowExecution::class, $result[0]);
+        $this->assertSame($workflowId, $result[0]->getWorkflowId());
     }
 
     public function testStopWorkflowTaskShouldThrowExceptionWhenExecutionNotFound(): void
     {
         $taskId = 'non-existent-task';
-
-        $this->executionRepository
-            ->expects($this->once())
-            ->method('findOneBy')
-            ->with(['taskId' => $taskId])
-            ->willReturn(null)
-        ;
 
         $this->expectException(DifyException::class);
         $this->expectExceptionMessage('Workflow execution not found for task: ' . $taskId);

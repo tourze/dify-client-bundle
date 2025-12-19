@@ -14,7 +14,7 @@ use Tourze\EasyAdminMenuBundle\Service\MenuProviderInterface;
  * Dify AI模块的管理菜单
  */
 #[Autoconfigure(public: true)]
-readonly class AdminMenu implements MenuProviderInterface
+final readonly class AdminMenu implements MenuProviderInterface
 {
     public function __construct(private LinkGeneratorInterface $linkGenerator)
     {

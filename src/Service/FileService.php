@@ -24,7 +24,7 @@ use Tourze\DifyClientBundle\Repository\FileUploadRepository;
  * 提供文件上传、预览、管理等功能
  * 对应 API: POST /files/upload, GET /files/{file_id}, DELETE /files/{file_id}
  */
-readonly class FileService
+final readonly class FileService
 {
     public function __construct(
         private HttpClientInterface $httpClient,
@@ -122,7 +122,7 @@ readonly class FileService
     {
         return $this->fileUploadRepository->findBy(
             ['userId' => $userId, 'deletedAt' => null],
-            ['createdAt' => 'DESC'],
+            ['createTime' => 'DESC'],
             $limit,
             $offset
         );
@@ -136,8 +136,8 @@ readonly class FileService
     public function getFilesByType(FileType $fileType, int $limit = 50, int $offset = 0): array
     {
         return $this->fileUploadRepository->findBy(
-            ['fileType' => $fileType, 'deletedAt' => null],
-            ['createdAt' => 'DESC'],
+            ['type' => $fileType, 'deletedAt' => null],
+            ['createTime' => 'DESC'],
             $limit,
             $offset
         );
@@ -160,16 +160,16 @@ readonly class FileService
         ;
 
         $totalSize = (int) $qb
-            ->select('SUM(f.fileSize)')
+            ->select('SUM(f.size)')
             ->where('f.deletedAt IS NULL')
             ->getQuery()
             ->getSingleScalarResult()
         ;
 
         $typeStats = $qb
-            ->select('f.fileType, COUNT(f.id) as count, SUM(f.fileSize) as size')
+            ->select('f.type, COUNT(f.id) as count, SUM(f.size) as size')
             ->where('f.deletedAt IS NULL')
-            ->groupBy('f.fileType')
+            ->groupBy('f.type')
             ->getQuery()
             ->getArrayResult()
         ;

@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Tourze\DifyClientBundle\Tests\Service;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Tourze\DifyClientBundle\Service\ApiRequestHandler;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractIntegrationTestCase;
 
 /**
  * ApiRequestHandler 测试类
@@ -18,15 +19,14 @@ use Tourze\DifyClientBundle\Service\ApiRequestHandler;
  * @internal
  */
 #[CoversClass(ApiRequestHandler::class)]
-class ApiRequestHandlerTest extends TestCase
+#[RunTestsInSeparateProcesses]
+final class ApiRequestHandlerTest extends AbstractIntegrationTestCase
 {
     private ApiRequestHandler $apiRequestHandler;
 
-    protected function setUp(): void
+    protected function onSetUp(): void
     {
-        parent::setUp();
-
-        $this->apiRequestHandler = new ApiRequestHandler();
+        $this->apiRequestHandler = self::getService(ApiRequestHandler::class);
     }
 
     /**

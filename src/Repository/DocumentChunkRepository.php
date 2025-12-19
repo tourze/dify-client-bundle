@@ -17,7 +17,7 @@ use Tourze\PHPUnitSymfonyKernelTest\Attribute\AsRepository;
  * @extends ServiceEntityRepository<DocumentChunk>
  */
 #[AsRepository(entityClass: DocumentChunk::class)]
-class DocumentChunkRepository extends ServiceEntityRepository
+final class DocumentChunkRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

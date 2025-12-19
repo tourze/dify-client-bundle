@@ -24,7 +24,7 @@ use Tourze\DifyClientBundle\Repository\DocumentRepository;
  *
  * 核心业务逻辑，HTTP通信由DocumentHttpClient处理
  */
-readonly class DocumentService
+final readonly class DocumentService
 {
     private DocumentHttpClient $httpClient;
 

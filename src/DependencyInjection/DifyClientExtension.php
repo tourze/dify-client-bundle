@@ -7,7 +7,7 @@ namespace Tourze\DifyClientBundle\DependencyInjection;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Tourze\SymfonyDependencyServiceLoader\AutoExtension;
 
-class DifyClientExtension extends AutoExtension
+final class DifyClientExtension extends AutoExtension
 {
     protected function getConfigDir(): string
     {

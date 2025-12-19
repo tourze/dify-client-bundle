@@ -5,22 +5,24 @@ declare(strict_types=1);
 namespace Tourze\DifyClientBundle\Tests\Service;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Tourze\DifyClientBundle\Entity\Dataset;
 use Tourze\DifyClientBundle\Exception\DifyRuntimeException;
 use Tourze\DifyClientBundle\Service\DocumentValidator;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractIntegrationTestCase;
 
 /** * @internal
  */
 #[CoversClass(DocumentValidator::class)]
-final class DocumentValidatorTest extends TestCase
+#[RunTestsInSeparateProcesses]
+final class DocumentValidatorTest extends AbstractIntegrationTestCase
 {
     private DocumentValidator $validator;
 
-    protected function setUp(): void
+    protected function onSetUp(): void
     {
-        $this->validator = new DocumentValidator();
+        $this->validator = self::getService(DocumentValidator::class);
     }
 
     public function testValidatorExists(): void

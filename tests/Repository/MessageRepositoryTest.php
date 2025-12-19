@@ -108,6 +108,7 @@ final class MessageRepositoryTest extends AbstractRepositoryTestCase
         $userMessage->setRole(MessageRole::USER);
         $userMessage->setContent('User message for aggregation');
         $userMessage->setStatus(MessageStatus::PENDING);
+        $userMessage->setCreateTime(new \DateTimeImmutable());
         $this->persistAndFlush($userMessage);
 
         // Act: 查找用户消息

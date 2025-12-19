@@ -10,7 +10,7 @@ use Tourze\DifyClientBundle\Entity\Document;
 /**
  * 文档操作成功事件
  */
-class DocumentOperationSuccessEvent extends Event
+final class DocumentOperationSuccessEvent extends Event
 {
     /**
      * @param array<string, mixed> $metadata

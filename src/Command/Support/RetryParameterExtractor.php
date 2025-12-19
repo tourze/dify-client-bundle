@@ -6,7 +6,7 @@ namespace Tourze\DifyClientBundle\Command\Support;
 
 use Symfony\Component\Console\Input\InputInterface;
 
-class RetryParameterExtractor
+final class RetryParameterExtractor
 {
     /**
      * @return array{

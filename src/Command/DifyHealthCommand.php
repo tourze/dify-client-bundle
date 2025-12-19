@@ -18,13 +18,13 @@ use Tourze\DifyClientBundle\Repository\DifySettingRepository;
     name: self::NAME,
     description: '检查 Dify 系统健康状态'
 )]
-class DifyHealthCommand extends Command
+final class DifyHealthCommand extends Command
 {
     public const NAME = 'dify:health';
 
     public function __construct(
         private readonly DifySettingRepository $settingRepository,
-        private readonly HttpClientInterface $httpClient,
+        private HttpClientInterface $httpClient,
         private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct();

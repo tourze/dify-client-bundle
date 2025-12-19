@@ -4,16 +4,11 @@ declare(strict_types=1);
 
 namespace Tourze\DifyClientBundle\Tests\Service;
 
-use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
-use Psr\Clock\ClockInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Tourze\DifyClientBundle\Repository\AnnotationRepository;
-use Tourze\DifyClientBundle\Repository\DifySettingRepository;
 use Tourze\DifyClientBundle\Service\AnnotationService;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractIntegrationTestCase;
 
 /**
  * AnnotationService 测试类
@@ -22,41 +17,17 @@ use Tourze\DifyClientBundle\Service\AnnotationService;
  * @internal
  */
 #[CoversClass(AnnotationService::class)]
-class AnnotationServiceTest extends TestCase
+#[RunTestsInSeparateProcesses]
+final class AnnotationServiceTest extends AbstractIntegrationTestCase
 {
     private AnnotationService $annotationService;
 
-    private HttpClientInterface&MockObject $httpClient;
+    private AnnotationRepository $annotationRepository;
 
-    private EventDispatcherInterface&MockObject $eventDispatcher;
-
-    private DifySettingRepository&MockObject $settingRepository;
-
-    private AnnotationRepository&MockObject $annotationRepository;
-
-    private ClockInterface&MockObject $clock;
-
-    private EntityManagerInterface&MockObject $entityManager;
-
-    protected function setUp(): void
+    protected function onSetUp(): void
     {
-        parent::setUp();
-
-        $this->httpClient = $this->createMock(HttpClientInterface::class);
-        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
-        $this->settingRepository = $this->createMock(DifySettingRepository::class);
-        $this->annotationRepository = $this->createMock(AnnotationRepository::class);
-        $this->clock = $this->createMock(ClockInterface::class);
-        $this->entityManager = $this->createMock(EntityManagerInterface::class);
-
-        $this->annotationService = new AnnotationService(
-            $this->httpClient,
-            $this->eventDispatcher,
-            $this->settingRepository,
-            $this->annotationRepository,
-            $this->clock,
-            $this->entityManager
-        );
+        $this->annotationService = self::getService(AnnotationService::class);
+        $this->annotationRepository = self::getService(AnnotationRepository::class);
     }
 
     /**

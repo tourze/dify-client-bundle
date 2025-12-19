@@ -13,7 +13,7 @@ use Tourze\DifyClientBundle\Enum\MessageStatus;
 /**
  * 消息工厂 - 专门处理消息实体的创建
  */
-readonly class MessageFactory
+final readonly class MessageFactory
 {
     public function __construct(private ClockInterface $clock)
     {

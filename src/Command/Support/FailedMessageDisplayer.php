@@ -10,7 +10,7 @@ use Tourze\DifyClientBundle\Entity\FailedMessage;
 use Tourze\DifyClientBundle\Entity\Message;
 use Tourze\DifyClientBundle\Entity\RequestTask;
 
-class FailedMessageDisplayer
+final class FailedMessageDisplayer
 {
     public function displayMessageInfo(FailedMessage $message, SymfonyStyle $io): void
     {

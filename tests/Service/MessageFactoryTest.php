@@ -5,35 +5,27 @@ declare(strict_types=1);
 namespace Tourze\DifyClientBundle\Tests\Service;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Psr\Clock\ClockInterface;
 use Tourze\DifyClientBundle\Entity\Conversation;
 use Tourze\DifyClientBundle\Entity\Message;
 use Tourze\DifyClientBundle\Enum\MessageRole;
 use Tourze\DifyClientBundle\Enum\MessageStatus;
 use Tourze\DifyClientBundle\Service\MessageFactory;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractIntegrationTestCase;
 
 /** * @internal
  */
 #[CoversClass(MessageFactory::class)]
-final class MessageFactoryTest extends TestCase
+#[RunTestsInSeparateProcesses]
+final class MessageFactoryTest extends AbstractIntegrationTestCase
 {
     private MessageFactory $factory;
 
-    private ClockInterface $clock;
-
-    protected function setUp(): void
+    protected function onSetUp(): void
     {
-        parent::setUp();
-
-        parent::setUp();
-        $this->clock = $this->createMock(ClockInterface::class);
-        $this->clock
-            ->method('now')
-            ->willReturn(new \DateTimeImmutable('2023-01-01 12:00:00'))
-        ;
-
-        $this->factory = new MessageFactory($this->clock);
+        // 从容器获取服务实例，避免直接实例化
+        $this->factory = self::getService(MessageFactory::class);
     }
 
     public function testCreateAssistantMessage(): void

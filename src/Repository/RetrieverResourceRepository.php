@@ -17,7 +17,7 @@ use Tourze\PHPUnitSymfonyKernelTest\Attribute\AsRepository;
  * @extends ServiceEntityRepository<RetrieverResource>
  */
 #[AsRepository(entityClass: RetrieverResource::class)]
-class RetrieverResourceRepository extends ServiceEntityRepository
+final class RetrieverResourceRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

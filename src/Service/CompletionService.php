@@ -26,7 +26,7 @@ use Tourze\DifyClientBundle\Repository\MessageRepository;
  * 提供单次文本生成功能，不依赖会话上下文
  * 对应 API: POST /completion-messages, DELETE /completion-messages/{task_id}
  */
-readonly class CompletionService
+final readonly class CompletionService
 {
     public function __construct(
         private HttpClientInterface $httpClient,

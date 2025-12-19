@@ -16,7 +16,7 @@ use Tourze\PHPUnitSymfonyKernelTest\Attribute\AsRepository;
  * @extends ServiceEntityRepository<AudioTranscription>
  */
 #[AsRepository(entityClass: AudioTranscription::class)]
-class AudioTranscriptionRepository extends ServiceEntityRepository
+final class AudioTranscriptionRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

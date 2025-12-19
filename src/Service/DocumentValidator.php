@@ -12,7 +12,7 @@ use Tourze\DifyClientBundle\Exception\DifyRuntimeException;
 /**
  * 文档验证器 - 专门处理文档相关的验证逻辑
  */
-readonly class DocumentValidator
+final readonly class DocumentValidator
 {
     private const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
     private const MAX_TEXT_LENGTH = 1000000; // 1M字符

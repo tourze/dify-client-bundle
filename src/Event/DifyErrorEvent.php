@@ -9,7 +9,7 @@ use Throwable;
 use Tourze\DifyClientBundle\Entity\Conversation;
 use Tourze\DifyClientBundle\Entity\Message;
 
-class DifyErrorEvent extends Event
+final class DifyErrorEvent extends Event
 {
     public function __construct(
         private readonly ?Conversation $conversation,

@@ -8,7 +8,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 use Tourze\DifyClientBundle\Entity\Conversation;
 use Tourze\DifyClientBundle\Entity\Message;
 
-class DifyReplyEvent extends Event
+final class DifyReplyEvent extends Event
 {
     public function __construct(
         private readonly ?Conversation $conversation,

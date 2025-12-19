@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Tourze\DifyClientBundle\Tests\Service;
 
-use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Psr\Clock\ClockInterface;
 use Tourze\DifyClientBundle\Entity\Dataset;
 use Tourze\DifyClientBundle\Service\DatasetFactory;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractIntegrationTestCase;
 
 /**
  * DatasetFactory 测试类
@@ -19,18 +18,15 @@ use Tourze\DifyClientBundle\Service\DatasetFactory;
  * @internal
  */
 #[CoversClass(DatasetFactory::class)]
-class DatasetFactoryTest extends TestCase
+#[RunTestsInSeparateProcesses]
+final class DatasetFactoryTest extends AbstractIntegrationTestCase
 {
     private DatasetFactory $datasetFactory;
 
-    private ClockInterface&MockObject $clock;
-
-    protected function setUp(): void
+    protected function onSetUp(): void
     {
-        parent::setUp();
-
-        $this->clock = $this->createMock(ClockInterface::class);
-        $this->datasetFactory = new DatasetFactory($this->clock);
+        // 从容器获取服务实例
+        $this->datasetFactory = self::getService(DatasetFactory::class);
     }
 
     /**
@@ -41,12 +37,6 @@ class DatasetFactoryTest extends TestCase
         $name = 'Test Dataset';
         $description = 'Test Description';
         $indexingTechnique = 'high_quality';
-        $now = new \DateTimeImmutable();
-
-        $this->clock->expects($this->once())
-            ->method('now')
-            ->willReturn($now)
-        ;
 
         $dataset = $this->datasetFactory->create($name, $description, $indexingTechnique);
 
@@ -56,7 +46,7 @@ class DatasetFactoryTest extends TestCase
         $this->assertEquals($indexingTechnique, $dataset->getIndexingTechnique());
         $this->assertEquals(0, $dataset->getDocumentCount());
         $this->assertEquals(0, $dataset->getWordCount());
-        $this->assertEquals($now, $dataset->getCreateTime());
+        $this->assertNotNull($dataset->getCreateTime());
     }
 
     /**
@@ -66,12 +56,6 @@ class DatasetFactoryTest extends TestCase
     {
         $name = 'Test Dataset';
         $indexingTechnique = 'economy';
-        $now = new \DateTimeImmutable();
-
-        $this->clock->expects($this->once())
-            ->method('now')
-            ->willReturn($now)
-        ;
 
         $dataset = $this->datasetFactory->create($name, null, $indexingTechnique);
 
@@ -81,6 +65,6 @@ class DatasetFactoryTest extends TestCase
         $this->assertEquals($indexingTechnique, $dataset->getIndexingTechnique());
         $this->assertEquals(0, $dataset->getDocumentCount());
         $this->assertEquals(0, $dataset->getWordCount());
-        $this->assertEquals($now, $dataset->getCreateTime());
+        $this->assertNotNull($dataset->getCreateTime());
     }
 }

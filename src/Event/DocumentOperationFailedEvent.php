@@ -11,7 +11,7 @@ use Tourze\DifyClientBundle\Entity\Document;
 /**
  * 文档操作失败事件
  */
-class DocumentOperationFailedEvent extends Event
+final class DocumentOperationFailedEvent extends Event
 {
     /**
      * @param array<string, mixed> $metadata

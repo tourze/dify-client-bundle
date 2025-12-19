@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * API请求处理器 - 简化控制器中的通用操作
  */
-readonly class ApiRequestHandler
+final readonly class ApiRequestHandler
 {
     /**
      * 解析并验证JSON请求数据

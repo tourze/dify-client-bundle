@@ -16,7 +16,7 @@ use Tourze\PHPUnitSymfonyKernelTest\Attribute\AsRepository;
  * @extends ServiceEntityRepository<EmbeddingModel>
  */
 #[AsRepository(entityClass: EmbeddingModel::class)]
-class EmbeddingModelRepository extends ServiceEntityRepository
+final class EmbeddingModelRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

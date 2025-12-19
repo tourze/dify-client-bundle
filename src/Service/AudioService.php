@@ -25,7 +25,7 @@ use Tourze\DifyClientBundle\Repository\DifySettingRepository;
  * 提供语音转文字、文字转语音等音频处理功能
  * 对应 API: POST /audio/speech-to-text, POST /audio/text-to-speech
  */
-readonly class AudioService
+final readonly class AudioService
 {
     public function __construct(
         private HttpClientInterface $httpClient,

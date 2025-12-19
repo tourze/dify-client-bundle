@@ -10,7 +10,7 @@ use Tourze\DifyClientBundle\Entity\Dataset;
 /**
  * 数据集操作成功事件
  */
-class DatasetOperationSuccessEvent extends Event
+final class DatasetOperationSuccessEvent extends Event
 {
     /**
      * @param array<string, mixed> $metadata

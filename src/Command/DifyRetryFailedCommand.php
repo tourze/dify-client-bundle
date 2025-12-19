@@ -24,7 +24,7 @@ use Tourze\DifyClientBundle\Service\DifyRetryService;
 #[AsCommand(name: self::NAME, description: '重试失败的 Dify 消息', help: <<<'TXT'
     此命令允许您重试失败的 Dify 消息。支持单个消息重试和整个批次重试。
     TXT)]
-class DifyRetryFailedCommand extends Command
+final class DifyRetryFailedCommand extends Command
 {
     public const NAME = 'dify:retry-failed';
 

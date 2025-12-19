@@ -39,6 +39,7 @@ final class WorkflowLogRepositoryTest extends AbstractRepositoryTestCase
         $workflowLog->setNodeType('llm');
         $workflowLog->setLogLevel('info');
         $workflowLog->setMessage('Node executed successfully');
+        $workflowLog->setLoggedAt(new \DateTimeImmutable());
 
         return $workflowLog;
     }

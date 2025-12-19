@@ -10,7 +10,7 @@ use Tourze\DifyClientBundle\Entity\Dataset;
 /**
  * 数据集工厂 - 专门处理数据集实体的创建
  */
-readonly class DatasetFactory
+final readonly class DatasetFactory
 {
     public function __construct(private ClockInterface $clock)
     {

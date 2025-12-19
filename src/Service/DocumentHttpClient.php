@@ -16,7 +16,7 @@ use Tourze\DifyClientBundle\Repository\DifySettingRepository;
  * 文档HTTP客户端 - 处理所有与Dify API的HTTP通信
  * 分离HTTP通信复杂度，简化DocumentService
  */
-readonly class DocumentHttpClient
+final readonly class DocumentHttpClient
 {
     public function __construct(
         private HttpClientInterface $httpClient,

@@ -7,7 +7,7 @@ namespace Tourze\DifyClientBundle\Message;
 use Tourze\DifyClientBundle\Entity\Message;
 use Tourze\DifyClientBundle\Entity\RequestTask;
 
-class ProcessDifyMessage
+final class ProcessDifyMessage
 {
     /**
      * @param array<Message> $originalMessages

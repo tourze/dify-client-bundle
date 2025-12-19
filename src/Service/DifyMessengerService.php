@@ -23,7 +23,7 @@ use Tourze\DifyClientBundle\Exception\DifySettingNotFoundException;
 use Tourze\DifyClientBundle\Repository\DifySettingRepository;
 use Tourze\DifyClientBundle\Repository\RequestTaskRepository;
 
-readonly class DifyMessengerService
+final readonly class DifyMessengerService
 {
     public function __construct(
         private MessageAggregator $aggregator,

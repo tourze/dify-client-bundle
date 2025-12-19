@@ -20,7 +20,7 @@ use Tourze\DifyClientBundle\Message\RetryFailedMessage;
 use Tourze\DifyClientBundle\Repository\FailedMessageRepository;
 
 #[AsMessageHandler]
-class RetryFailedMessageHandler
+final class RetryFailedMessageHandler
 {
     public function __construct(
         private readonly FailedMessageRepository $failedMessageRepository,

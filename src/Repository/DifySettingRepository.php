@@ -14,7 +14,7 @@ use Tourze\PHPUnitSymfonyKernelTest\Attribute\AsRepository;
  * @extends ServiceEntityRepository<DifySetting>
  */
 #[AsRepository(entityClass: DifySetting::class)]
-class DifySettingRepository extends ServiceEntityRepository
+final class DifySettingRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

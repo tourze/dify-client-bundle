@@ -6,7 +6,7 @@ namespace Tourze\DifyClientBundle\Command\Support;
 
 use Symfony\Component\Console\Input\InputInterface;
 
-class RetryParameterValidator
+final class RetryParameterValidator
 {
     /**
      * @return string[]

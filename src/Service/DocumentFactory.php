@@ -12,7 +12,7 @@ use Tourze\DifyClientBundle\Entity\Document;
 /**
  * 文档工厂 - 专门处理文档实体的创建
  */
-readonly class DocumentFactory
+final readonly class DocumentFactory
 {
     public function __construct(private ClockInterface $clock)
     {

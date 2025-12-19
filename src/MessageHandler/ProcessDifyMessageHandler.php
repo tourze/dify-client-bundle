@@ -9,7 +9,7 @@ use Tourze\DifyClientBundle\Message\ProcessDifyMessage;
 use Tourze\DifyClientBundle\Service\DifyMessengerService;
 
 #[AsMessageHandler]
-class ProcessDifyMessageHandler
+final class ProcessDifyMessageHandler
 {
     public function __construct(
         private readonly DifyMessengerService $difyMessengerService,

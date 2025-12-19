@@ -4,16 +4,11 @@ declare(strict_types=1);
 
 namespace Tourze\DifyClientBundle\Tests\Service;
 
-use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
-use Psr\Clock\ClockInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Tourze\DifyClientBundle\Repository\AudioTranscriptionRepository;
-use Tourze\DifyClientBundle\Repository\DifySettingRepository;
 use Tourze\DifyClientBundle\Service\AudioService;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractIntegrationTestCase;
 
 /**
  * AudioService 测试类
@@ -22,41 +17,17 @@ use Tourze\DifyClientBundle\Service\AudioService;
  * @internal
  */
 #[CoversClass(AudioService::class)]
-class AudioServiceTest extends TestCase
+#[RunTestsInSeparateProcesses]
+final class AudioServiceTest extends AbstractIntegrationTestCase
 {
     private AudioService $audioService;
 
-    private HttpClientInterface&MockObject $httpClient;
+    private AudioTranscriptionRepository $transcriptionRepository;
 
-    private EventDispatcherInterface&MockObject $eventDispatcher;
-
-    private DifySettingRepository&MockObject $settingRepository;
-
-    private AudioTranscriptionRepository&MockObject $transcriptionRepository;
-
-    private ClockInterface&MockObject $clock;
-
-    private EntityManagerInterface&MockObject $entityManager;
-
-    protected function setUp(): void
+    protected function onSetUp(): void
     {
-        parent::setUp();
-
-        $this->httpClient = $this->createMock(HttpClientInterface::class);
-        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
-        $this->settingRepository = $this->createMock(DifySettingRepository::class);
-        $this->transcriptionRepository = $this->createMock(AudioTranscriptionRepository::class);
-        $this->clock = $this->createMock(ClockInterface::class);
-        $this->entityManager = $this->createMock(EntityManagerInterface::class);
-
-        $this->audioService = new AudioService(
-            $this->httpClient,
-            $this->eventDispatcher,
-            $this->settingRepository,
-            $this->transcriptionRepository,
-            $this->clock,
-            $this->entityManager
-        );
+        $this->audioService = self::getService(AudioService::class);
+        $this->transcriptionRepository = self::getService(AudioTranscriptionRepository::class);
     }
 
     /**
@@ -64,15 +35,11 @@ class AudioServiceTest extends TestCase
      */
     public function testTextToAudio(): void
     {
-        $text = 'Hello, world!';
-        $user = 'anonymous';
-
         // 验证服务实例创建正确
         $this->assertInstanceOf(AudioService::class, $this->audioService);
 
-        // 这里应该mock HTTP客户端和配置
-        // 由于当前没有具体实现，先创建基本结构
-        $this->assertTrue(true, '文字转语音服务测试结构已创建');
+        // 测试服务方法存在
+        $this->assertTrue(method_exists($this->audioService, 'textToSpeech'));
     }
 
     /**
@@ -80,8 +47,11 @@ class AudioServiceTest extends TestCase
      */
     public function testAudioToText(): void
     {
-        // 基本测试结构
-        $this->assertTrue(true, '语音转文字测试结构已创建');
+        // 验证服务实例创建正确
+        $this->assertInstanceOf(AudioService::class, $this->audioService);
+
+        // 测试服务方法存在
+        $this->assertTrue(method_exists($this->audioService, 'speechToText'));
     }
 
     public function testBatchSpeechToText(): void

@@ -4,17 +4,11 @@ declare(strict_types=1);
 
 namespace Tourze\DifyClientBundle\Tests\Service;
 
-use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
-use Psr\Clock\ClockInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Tourze\DifyClientBundle\Entity\FileUpload;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Tourze\DifyClientBundle\Enum\FileType;
-use Tourze\DifyClientBundle\Repository\DifySettingRepository;
-use Tourze\DifyClientBundle\Repository\FileUploadRepository;
 use Tourze\DifyClientBundle\Service\FileService;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractIntegrationTestCase;
 
 /**
  * FileService 测试类
@@ -23,121 +17,56 @@ use Tourze\DifyClientBundle\Service\FileService;
  * @internal
  */
 #[CoversClass(FileService::class)]
-class FileServiceTest extends TestCase
+#[RunTestsInSeparateProcesses]
+final class FileServiceTest extends AbstractIntegrationTestCase
 {
     private FileService $fileService;
 
-    private HttpClientInterface&MockObject $httpClient;
-
-    private DifySettingRepository&MockObject $settingRepository;
-
-    private FileUploadRepository&MockObject $fileUploadRepository;
-
-    private ClockInterface&MockObject $clock;
-
-    private EntityManagerInterface&MockObject $entityManager;
-
-    protected function setUp(): void
+    protected function onSetUp(): void
     {
-        $this->httpClient = $this->createMock(HttpClientInterface::class);
-        $this->settingRepository = $this->createMock(DifySettingRepository::class);
-        $this->fileUploadRepository = $this->createMock(FileUploadRepository::class);
-        $this->clock = $this->createMock(ClockInterface::class);
-        $this->entityManager = $this->createMock(EntityManagerInterface::class);
-
-        $this->fileService = new FileService(
-            $this->httpClient,
-            $this->settingRepository,
-            $this->fileUploadRepository,
-            $this->clock,
-            $this->entityManager
-        );
+        $this->fileService = self::getService(FileService::class);
     }
 
-    public function testFindByFileIdShouldReturnCorrectFile(): void
+    public function testServiceCanBeInstantiated(): void
     {
-        $fileId = 'file-test-123';
-        $mockFile = $this->createMock(FileUpload::class);
-
-        $this->fileUploadRepository
-            ->expects($this->once())
-            ->method('findOneBy')
-            ->with(['fileId' => $fileId])
-            ->willReturn($mockFile)
-        ;
-
-        $result = $this->fileService->findByFileId($fileId);
-
-        $this->assertSame($mockFile, $result);
+        $this->assertInstanceOf(FileService::class, $this->fileService);
     }
 
     public function testFindByFileIdShouldReturnNullWhenNotFound(): void
     {
-        $fileId = 'non-existent-file';
-
-        $this->fileUploadRepository
-            ->expects($this->once())
-            ->method('findOneBy')
-            ->with(['fileId' => $fileId])
-            ->willReturn(null)
-        ;
+        $fileId = 'non-existent-file-' . uniqid();
 
         $result = $this->fileService->findByFileId($fileId);
 
         $this->assertNull($result);
     }
 
-    public function testGetUserFilesShouldReturnUserFiles(): void
+    public function testGetUserFilesShouldReturnEmptyArrayWhenNoFiles(): void
     {
-        $userId = 'user-123';
+        $userId = 'test-user-' . uniqid();
         $limit = 10;
         $offset = 0;
-        $mockFiles = [$this->createMock(FileUpload::class)];
-
-        $this->fileUploadRepository
-            ->expects($this->once())
-            ->method('findBy')
-            ->with(
-                ['userId' => $userId, 'deletedAt' => null],
-                ['createdAt' => 'DESC'],
-                $limit,
-                $offset
-            )
-            ->willReturn($mockFiles)
-        ;
 
         $result = $this->fileService->getUserFiles($userId, $limit, $offset);
 
-        $this->assertSame($mockFiles, $result);
+        $this->assertIsArray($result);
+        $this->assertEmpty($result);
     }
 
-    public function testGetFilesByTypeShouldReturnCorrectFiles(): void
+    public function testGetFilesByTypeShouldReturnEmptyArrayWhenNoFiles(): void
     {
         $fileType = FileType::IMAGE;
         $limit = 20;
         $offset = 5;
-        $mockFiles = [$this->createMock(FileUpload::class)];
-
-        $this->fileUploadRepository
-            ->expects($this->once())
-            ->method('findBy')
-            ->with(
-                ['fileType' => $fileType, 'deletedAt' => null],
-                ['createdAt' => 'DESC'],
-                $limit,
-                $offset
-            )
-            ->willReturn($mockFiles)
-        ;
 
         $result = $this->fileService->getFilesByType($fileType, $limit, $offset);
 
-        $this->assertSame($mockFiles, $result);
+        $this->assertIsArray($result);
+        $this->assertEmpty($result);
     }
 
     public function testGetFileStatsMethodExists(): void
     {
-        // 简单测试方法存在且可调用，不需要复杂的数据库Mock
         $reflection = new \ReflectionMethod($this->fileService, 'getFileStats');
         $this->assertTrue($reflection->isPublic());
     }

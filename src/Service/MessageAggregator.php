@@ -19,7 +19,7 @@ use Tourze\DifyClientBundle\Repository\ConversationRepository;
 use Tourze\DifyClientBundle\Repository\DifySettingRepository;
 use Tourze\DifyClientBundle\Repository\MessageRepository;
 
-class MessageAggregator
+final class MessageAggregator
 {
     private ?Conversation $currentConversation = null;
 

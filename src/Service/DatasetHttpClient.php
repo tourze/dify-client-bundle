@@ -14,7 +14,7 @@ use Tourze\DifyClientBundle\Repository\DifySettingRepository;
 /**
  * 数据集HTTP客户端 - 处理所有与Dify API的HTTP通信
  */
-readonly class DatasetHttpClient
+final readonly class DatasetHttpClient
 {
     public function __construct(
         private HttpClientInterface $httpClient,

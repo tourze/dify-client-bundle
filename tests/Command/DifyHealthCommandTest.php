@@ -5,7 +5,6 @@ namespace Tourze\DifyClientBundle\Tests\Command;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\MockObject\Builder\InvocationMocker;
-use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -23,30 +22,32 @@ use Tourze\PHPUnitSymfonyKernelTest\AbstractCommandTestCase;
 final class DifyHealthCommandTest extends AbstractCommandTestCase
 {
     private HttpClientInterface $httpClient;
-
-    /**
-     * 获取注入了 Mock HttpClient 的 CommandTester
-     * 注意：此方法会清除已有的 commandTester 缓存，确保每次都使用新的 Mock
-     */
-    protected function getCommandTester(): CommandTester
-    {
-        // 每次都重新创建 Mock，确保测试隔离
-        $this->httpClient = $this->createMock(HttpClientInterface::class);
-
-        // 替换容器中的 HttpClient 为 Mock
-        // 注意：必须在获取命令实例之前完成替换
-        self::getContainer()->set(HttpClientInterface::class, $this->httpClient);
-
-        // 从容器中获取命令实例（此时会注入 Mock 的 HttpClient）
-        $command = self::getContainer()->get(DifyHealthCommand::class);
-        self::assertInstanceOf(Command::class, $command);
-
-        return new CommandTester($command);
-    }
+    private ?DifyHealthCommand $command = null;
 
     protected function onSetUp(): void
     {
-        // Mock 的设置在 getCommandTester() 中完成
+        // 创建 Mock HttpClient（Mock 网络请求是允许的）
+        $this->httpClient = $this->createMock(HttpClientInterface::class);
+    }
+
+    /**
+     * 获取 CommandTester
+     *
+     * 从容器获取命令实例，然后通过反射注入 Mock HttpClient。
+     * Mock 网络请求是明确允许的（"Mock是万恶之首，除非Mock网络请求"）。
+     */
+    protected function getCommandTester(): CommandTester
+    {
+        // 从容器获取命令实例
+        $this->command = self::getService(DifyHealthCommand::class);
+
+        // 使用反射注入 Mock HttpClient
+        $reflection = new \ReflectionClass($this->command);
+        $property = $reflection->getProperty('httpClient');
+        $property->setAccessible(true);
+        $property->setValue($this->command, $this->httpClient);
+
+        return new CommandTester($this->command);
     }
 
     private function clearAllDifySettings(): void
@@ -89,6 +90,9 @@ final class DifyHealthCommandTest extends AbstractCommandTestCase
 
         $this->persistAndFlush($setting);
 
+        // 强制清除 EntityManager 缓存，确保数据被正确保存
+        self::getEntityManager()->clear();
+
         // 先调用 getCommandTester() 以初始化 Mock
         $commandTester = $this->getCommandTester();
 
@@ -96,13 +100,18 @@ final class DifyHealthCommandTest extends AbstractCommandTestCase
         $response = $this->createMock(ResponseInterface::class);
         $response->method('getStatusCode')->willReturn(200);
 
-        // 设置 Mock 期望：使用 callback 验证第三个参数为数组类型
+        // 设置 Mock 期望：使用更灵活的匹配
         /** @var InvocationMocker $requestExpectation */
         $requestExpectation = $this->httpClient->expects($this->once());
         $requestExpectation->method('request')->with(
-            'GET',
-            'https://api.dify.ai/parameters',
-            self::callback(static fn (mixed $value): bool => is_array($value))
+            $this->equalTo('GET'),
+            $this->equalTo('https://api.dify.ai/parameters'),
+            self::callback(static function ($options) {
+                // 验证选项格式
+                return is_array($options)
+                    && isset($options['headers']['Authorization'])
+                    && str_contains($options['headers']['Authorization'], 'Bearer');
+            })
         )->willReturn($response);
 
         // Act: 执行命令
